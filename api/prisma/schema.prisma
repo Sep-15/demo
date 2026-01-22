@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  name     String?
+  password String
+  createdAt DateTime @default(now())
+  isDeleted Boolean @default(false)
+  followers Follow[] @relation("UserFollowers")
+  following Follow[] @relation("UserFollowing")
+  posts Post[]
+  comments Comment[]
+  votes Vote[]
+  sender Chat[] @relation("UserAsSender")
+  receiver Chat[] @relation("UserAsReceiver")
+  groups GroupMember[]
+  groupMessageSender GroupMessage[]
+  notifications Notification[] @relation("UserNotifications")
+  actions Notification[] @relation("UserActions")
+
+  @@index([email,isDeleted])
+}
+
+model Follow{
+  id Int @id @default(autoincrement())
+  followerId Int
+  followingId Int
+
+  follower User @relation("UserFollowing",fields: [followerId],references: [id])
+  following User @relation("UserFollowers",fields: [followingId],references: [id])
+  
+  @@unique([followerId,followingId])
+  @@index([followingId])
+  @@index([followerId])
+}
+
+model Post{
+  id Int @id @default(autoincrement())
+  content String @db.Text
+  url Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean @default(false)
+  authorId Int
+  author User @relation(fields: [authorId],references: [id])
+  comments Comment[]
+  votes Vote[]
+  notifications Notification[]
+
+  @@index([authorId,createdAt(sort: Desc)])
+}
+
+model Comment{
+  id Int @id @default(autoincrement())
+  content String
+  createdAt DateTime @default(now())
+  authorId Int
+  author User @relation(fields: [authorId],references: [id])
+  postId Int
+  post Post @relation(fields: [postId],references: [id],onDelete: Cascade)
+  notifications Notification[]
+
+  parentId Int?
+  parent Comment? @relation("CommentToComment",fields: [parentId],references: [id],onDelete: Cascade)
+  replies Comment[] @relation("CommentToComment")
+
+  @@index([postId,createdAt(sort: Desc)])
+  @@index([parentId])
+}
+
+model Vote{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  postId Int
+  post Post @relation(fields: [postId],references: [id],onDelete: Cascade)
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+  voteType VoteType @default(UP)
+  @@unique([postId,userId])
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+model Chat{
+  id Int @id @default(autoincrement())
+  content String? @db.Text
+  url Json?
+  isRead Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  senderId Int
+  sender User @relation("UserAsSender",fields: [senderId],references: [id])
+  receiverId Int
+  receiver User @relation("UserAsReceiver",fields: [receiverId],references: [id])
+  
+  @@index([senderId,receiverId,createdAt(sort: Desc)])
+}
+
+model Group{
+  id Int @id @default(autoincrement())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  members GroupMember[]
+  messages GroupMessage[]
+}
+
+model GroupMember{
+  id Int @id @default(autoincrement())
+  role GroupRole @default(MEMBER)
+  joinedAt DateTime @default(now())
+  lastReadAt DateTime @default(now())
+  groupId Int
+  group Group @relation(fields: [groupId],references: [id])
+  userid Int
+  user User @relation(fields: [userid],references: [id])
+
+  @@unique([userid,groupId])
+  @@index([userid,lastReadAt])
+}
+
+enum GroupRole{
+  ADMIN
+  MEMBER
+}
+
+model GroupMessage{
+  id Int @id @default(autoincrement())
+  content String? @db.Text
+  url Json?
+  createdAt DateTime @default(now())
+  groupId Int
+  group Group @relation(fields: [groupId],references: [id])
+  senderId Int
+  sender User @relation(fields: [senderId],references: [id])
+
+  @@index([groupId,createdAt(sort: Desc)])
+}
+
+model Notification{
+  id Int @id @default(autoincrement())
+  type NotificationType
+  content String?
+  isRead Boolean @default(false)
+  createdAt DateTime @default(now())
+  recipientId Int
+  recipient User @relation("UserNotifications",fields: [recipientId],references: [id],onDelete: Cascade)
+  actorId Int
+  actor User @relation("UserActions",fields: [actorId],references: [id],onDelete: Cascade)
+  postid Int?
+  post Post? @relation(fields: [postid],references: [id],onDelete: Cascade)
+  commentId Int?
+  comment Comment? @relation(fields: [commentId],references: [id],onDelete: Cascade)
+
+  @@index([recipientId,isRead,createdAt(sort: Desc)])
+  @@index([actorId])
+}
+
+enum NotificationType{
+  FOLLOW
+  LIKE
+  COMMENT
+  REPLY
+  SYSTEM
+  
+}
