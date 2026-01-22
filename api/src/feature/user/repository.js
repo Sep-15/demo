@@ -1,8 +1,8 @@
 import { prisma } from "../../db.js";
 
 /* 用户基础信息 */
-export const findUserById = (userId) => {
-  return prisma.user.findFirst({
+export const findUserById = (userId) =>
+  prisma.user.findFirst({
     where: {
       id: userId,
       isDeleted: false,
@@ -11,26 +11,43 @@ export const findUserById = (userId) => {
       id: true,
       name: true,
       email: true,
+      createdAt: true,
     },
   });
-};
 
-/* 关注 / 被关注数量 */
-export const countFollowers = (userId) => {
-  return prisma.follow.count({
+/* 更新用户 */
+export const updateUserById = (userId, data) =>
+  prisma.user.update({
+    where: { id: userId },
+    data,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  });
+
+/* 软删除用户 */
+export const softDeleteUser = (userId) =>
+  prisma.user.update({
+    where: { id: userId },
+    data: { isDeleted: true },
+  });
+
+/* 关注数 */
+export const countFollowers = (userId) =>
+  prisma.follow.count({
     where: { followingId: userId },
   });
-};
 
-export const countFollowing = (userId) => {
-  return prisma.follow.count({
+export const countFollowing = (userId) =>
+  prisma.follow.count({
     where: { followerId: userId },
   });
-};
 
-/* 用户发布的帖子 */
-export const findUserPosts = (userId) => {
-  return prisma.post.findMany({
+/* 用户帖子 */
+export const findUserPosts = (userId) =>
+  prisma.post.findMany({
     where: {
       authorId: userId,
       isDeleted: false,
@@ -45,11 +62,10 @@ export const findUserPosts = (userId) => {
       },
     },
   });
-};
 
-/* 用户点赞过的帖子 */
-export const findLikedPosts = (userId) => {
-  return prisma.vote.findMany({
+/* 点赞过的帖子 */
+export const findLikedPosts = (userId) =>
+  prisma.vote.findMany({
     where: {
       userId,
       voteType: "UP",
@@ -68,4 +84,3 @@ export const findLikedPosts = (userId) => {
       },
     },
   });
-};

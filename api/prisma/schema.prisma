@@ -21,6 +21,7 @@ model User {
   votes Vote[]
   sender Chat[] @relation("UserAsSender")
   receiver Chat[] @relation("UserAsReceiver")
+  groupOwner Group[]
   groups GroupMember[]
   groupMessageSender GroupMessage[]
   notifications Notification[] @relation("UserNotifications")
@@ -112,26 +113,33 @@ model Group{
   name String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  createdBy Int
+  creator User @relation(fields: [createdBy],references: [id])
   
   members GroupMember[]
   messages GroupMessage[]
+  notifications Notification[]
 }
 
 model GroupMember{
   id Int @id @default(autoincrement())
   role GroupRole @default(MEMBER)
   joinedAt DateTime @default(now())
-  lastReadAt DateTime @default(now())
+  lastReadMessageId Int?
   groupId Int
-  group Group @relation(fields: [groupId],references: [id])
-  userid Int
-  user User @relation(fields: [userid],references: [id])
+  group Group @relation(fields: [groupId],references: [id],onDelete: Cascade)
+  userId Int
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
 
-  @@unique([userid,groupId])
-  @@index([userid,lastReadAt])
+  @@unique([userId,groupId])
+  @@index([groupId])
+  @@index([userId])
+  @@index([groupId,lastReadMessageId])
 }
 
 enum GroupRole{
+  OWNER
   ADMIN
   MEMBER
 }
@@ -142,11 +150,12 @@ model GroupMessage{
   url Json?
   createdAt DateTime @default(now())
   groupId Int
-  group Group @relation(fields: [groupId],references: [id])
+  group Group @relation(fields: [groupId],references: [id],onDelete: Cascade)
   senderId Int
   sender User @relation(fields: [senderId],references: [id])
 
   @@index([groupId,createdAt(sort: Desc)])
+  @@index([groupId,id])
 }
 
 model Notification{
@@ -159,10 +168,12 @@ model Notification{
   recipient User @relation("UserNotifications",fields: [recipientId],references: [id],onDelete: Cascade)
   actorId Int
   actor User @relation("UserActions",fields: [actorId],references: [id],onDelete: Cascade)
-  postid Int?
-  post Post? @relation(fields: [postid],references: [id],onDelete: Cascade)
+  postId Int?
+  post Post? @relation(fields: [postId],references: [id],onDelete: Cascade)
   commentId Int?
   comment Comment? @relation(fields: [commentId],references: [id],onDelete: Cascade)
+  groupId Int?
+  group   Group? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@index([recipientId,isRead,createdAt(sort: Desc)])
   @@index([actorId])
