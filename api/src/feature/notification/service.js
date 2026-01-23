@@ -1,8 +1,10 @@
 import * as repo from "./repository.js";
+import { emitToUser } from "../../socket/emitter.js";
 
 /**
  * 统一通知入口
- * 永远不 throw，避免影响主业务
+ * DB + Socket
+ * 永远不 throw
  */
 export const notify = async ({
   type,
@@ -12,10 +14,10 @@ export const notify = async ({
   commentId = null,
   content = null,
 }) => {
-  if (recipientId === actorId) return;
+  if (!recipientId || recipientId === actorId) return;
 
   try {
-    await repo.createNotification({
+    const notification = await repo.createNotification({
       type,
       recipientId,
       actorId,
@@ -23,8 +25,17 @@ export const notify = async ({
       commentId,
       content,
     });
+
+    emitToUser(recipientId, "notification:new", {
+      id: notification.id,
+      type,
+      content,
+      actorId,
+      postId,
+      commentId,
+      createdAt: notification.createdAt,
+    });
   } catch (e) {
-    // 吞掉所有异常，notification 不影响主流程
     console.error("notify error:", e);
   }
 };
