@@ -1,3 +1,4 @@
+// File: src/feature/auth/controller.js
 import { catchAsync } from "../../utils/catchAsync.js";
 import * as authService from "./service.js";
 

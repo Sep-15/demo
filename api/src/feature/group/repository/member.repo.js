@@ -1,3 +1,4 @@
+// File: src/feature/group/repository/member.repo.js
 import { prisma } from "../../../db.js";
 
 export const findMember = (groupId, userId) =>

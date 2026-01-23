@@ -1,3 +1,4 @@
+// File: src/feature/chat/service.js
 import {
   createChat,
   findConversations,

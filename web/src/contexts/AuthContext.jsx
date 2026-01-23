@@ -1,3 +1,4 @@
+// File: src/contexts/AuthContext.jsx
 import { useState, createContext, useMemo } from "react";
 import { loginApi, registerApi } from "../api/index";
 

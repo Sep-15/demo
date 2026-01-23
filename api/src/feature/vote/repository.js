@@ -1,3 +1,4 @@
+// File: src/feature/vote/repository.js
 import { prisma } from "../../db.js";
 
 /* 查投票 */

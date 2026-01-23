@@ -1,3 +1,4 @@
+// File: src/feature/group/repository/message.repo.js
 import { prisma } from "../../../db.js";
 
 export const createMessage = (groupId, senderId, content) =>

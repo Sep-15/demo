@@ -1,3 +1,4 @@
+// File: src/feature/auth/service.js
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import * as repo from "./repository.js";

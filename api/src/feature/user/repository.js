@@ -1,3 +1,4 @@
+// File: src/feature/user/repository.js
 import { prisma } from "../../db.js";
 
 /* 用户基础信息 */

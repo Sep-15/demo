@@ -1,3 +1,4 @@
+// File: src/feature/post/service.js
 import {
   createPost,
   findPosts,

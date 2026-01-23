@@ -1,3 +1,4 @@
+// File: src/feature/post/repository.js
 import { prisma } from "../../db.js";
 
 /* 创建帖子 */

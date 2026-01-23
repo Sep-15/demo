@@ -1,3 +1,4 @@
+// File: src/socket/online.js
 const onlineUsers = new Map();
 /**
  * Map<userId, Set<socketId>>

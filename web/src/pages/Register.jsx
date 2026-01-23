@@ -1,3 +1,4 @@
+// File: src/pages/Register.jsx
 import { useState, useContext } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";

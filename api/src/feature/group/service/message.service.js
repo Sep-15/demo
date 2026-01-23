@@ -1,3 +1,4 @@
+// File: src/feature/group/service/message.service.js
 import * as repo from "../repository/message.repo.js";
 import { findMember } from "../repository/member.repo.js";
 import { AppError } from "../../../errors/AppError.js";

@@ -1,3 +1,4 @@
+// File: src/feature/chat/controller.js
 import { catchAsync } from "../../utils/catchAsync.js";
 import {
   sendMessageService,

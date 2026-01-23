@@ -1,3 +1,4 @@
+// File: src/socket/index.js
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import { addOnlineUser, removeOnlineUser } from "./online.js";

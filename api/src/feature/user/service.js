@@ -1,3 +1,4 @@
+// File: src/feature/user/service.js
 import {
   findUserById,
   updateUserById,

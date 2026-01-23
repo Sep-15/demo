@@ -1,3 +1,4 @@
+// File: src/routes/router.js
 import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 

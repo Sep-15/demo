@@ -1,3 +1,4 @@
+// File: src/feature/notification/repository.js
 import { prisma } from "../../db.js";
 
 export const createNotification = (data) =>

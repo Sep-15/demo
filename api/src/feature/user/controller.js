@@ -1,3 +1,4 @@
+// File: src/feature/user/controller.js
 import { catchAsync } from "../../utils/catchAsync.js";
 import {
   getUserProfile,

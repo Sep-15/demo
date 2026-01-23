@@ -1,3 +1,4 @@
+// File: src/socket/emitter.js
 import { getUserSockets } from "./online.js";
 
 let io = null;

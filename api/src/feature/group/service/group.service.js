@@ -1,3 +1,4 @@
+// File: src/feature/group/service/group.service.js
 import * as repo from "../repository/group.repo.js";
 import * as memberRepo from "../repository/member.repo.js";
 import { AppError } from "../../../errors/AppError.js";

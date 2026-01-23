@@ -1,3 +1,4 @@
+// File: src/feature/auth/repository.js
 import { prisma } from "../../db.js";
 
 export const findByEmail = (email) =>

@@ -1,3 +1,4 @@
+// File: src/pages/ProfilePage.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getUserProfileApi } from "../api/index";

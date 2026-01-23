@@ -1,3 +1,4 @@
+// File: src/feature/notification/service.js
 import * as repo from "./repository.js";
 import { emitToUser } from "../../socket/emitter.js";
 
