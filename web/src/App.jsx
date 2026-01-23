@@ -7,7 +7,7 @@ const App = () => {
     <div className="min-h-screen bg-gray-100">
       <header className="sticky top-0 z-50 h-14 bg-white border-b">
         <div className="mx-auto max-w-[1280px] h-full flex items-center px-4">
-          <div className="text-lg font-semibold">Social Room</div>
+          <div className="text-lg font-semibold">Room</div>
         </div>
       </header>
 

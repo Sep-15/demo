@@ -1,11 +1,11 @@
 // File: src/pages/Register.jsx
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { AuthContext } from "../contexts/AuthContext.jsx";
+import { useAuth } from "../hooks/useAuth";
 
 const Register = () => {
-  const { register, token } = useContext(AuthContext);
+  const { register, token } = useAuth();
   const navigate = useNavigate();
 
   if (token) {

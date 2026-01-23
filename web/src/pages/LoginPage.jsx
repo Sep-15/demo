@@ -1,11 +1,11 @@
 // File: src/pages/LoginPage.jsx
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { AuthContext } from "../contexts/AuthContext.jsx";
+import { useAuth } from "../hooks/useAuth.js";
 
 const LoginPage = () => {
-  const { login, token } = useContext(AuthContext);
+  const { login, token } = useAuth;
   const navigate = useNavigate();
 
   // 已登录用户不应再看到登录页
