@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { profileApi } from "../api/user";
+import { getUserProfileApi } from "../api/index";
 
 const TABS = {
   POSTS: "posts",
@@ -18,7 +18,7 @@ const ProfilePage = () => {
     let ignore = false;
 
     const fetchProfile = async () => {
-      const { data } = await profileApi(userId);
+      const { data } = await getUserProfileApi(userId);
       if (!ignore) {
         setProfile(data);
         setLoading(false);
