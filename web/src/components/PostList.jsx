@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { getPostsApi } from "../api/index";
+import { PostItem } from "./PostItem";
 const limit = 20;
 export const PostList = () => {
   const [page, setPage] = useState(1);
@@ -8,7 +8,6 @@ export const PostList = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const fetchedPagesRef = useRef(new Set());
-  const navigate = useNavigate();
   useEffect(() => {
     fetchPosts(page);
   }, [page]);
@@ -33,19 +32,7 @@ export const PostList = () => {
   return (
     <div className="space-y-3">
       {posts.map((post) => (
-        <div
-          key={post.id}
-          onClick={() => navigate(`/posts/${post.id}`)}
-          className="cursor-pointer rounded-md bg-white p-4 shadow-sm hover:bg-gray-50"
-        >
-          <div className="text-sm text-gray-500">
-            {post.author?.name ?? "不愿意透露姓名的用户"}
-          </div>
-          <div className="mt-1 text-gray-900">{post.content}</div>
-          <div className="mt-2 text-xs  text-gray-400">
-            👍{post.voteCount} · {new Date(post.createdAt).toLocaleString()}
-          </div>
-        </div>
+        <PostItem key={post.id} post={post} />
       ))}
       {loading && (
         <div className="rounded-md bg-white p-4 text-sm text-gray-500 shadow-sm">
