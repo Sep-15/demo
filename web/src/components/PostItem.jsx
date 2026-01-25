@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { Avatar } from "./Avatar";
 
-export const PostItem = ({ post }) => {
+export const PostItem = ({ post, clickable = true }) => {
   const navigate = useNavigate();
   return (
     <div>
       <div
-        onClick={() => navigate(`/post/${post.id}`)}
+        onClick={clickable ? () => navigate(`/posts/${post.id}`) : undefined}
         className="cursor-pointer rounded-md bg-white p-4 shadow-sm hover:bg-gray-50"
       >
         <div className="flex items-center gap-2">

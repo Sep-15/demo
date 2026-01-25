@@ -43,7 +43,9 @@ export const findPostById = (postId) =>
         orderBy: { createdAt: "desc" },
         include: {
           author: { select: { id: true, name: true } },
-          replies: true,
+          replies: {
+            include: { author: { select: { id: true, name: true } } },
+          },
         },
       },
     },
