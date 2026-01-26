@@ -12,9 +12,9 @@ import { notify } from "../notification/service.js";
 
 /* 投票 */
 export const votePostService = async (userId, payload) => {
-  const { postId, voteType } = payload;
+  const { postId, voteType = "UP" } = payload;
 
-  if (!postId || !voteType) {
+  if (!postId) {
     throw new AppError("INVALID_PARAMS", 400);
   }
 

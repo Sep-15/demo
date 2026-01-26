@@ -12,11 +12,12 @@ export const createPost = (authorId, data) =>
     include: {
       author: { select: { id: true, name: true } },
       votes: { select: { id: true } },
+      _count: { select: { votes: true } },
     },
   });
 
-/* 帖子列表 */
-export const findPosts = ({ skip = 0, take = 20 }) =>
+/* 帖子流（只查当前用户的 vote） */
+export const findPosts = (userId, { skip = 0, take = 20 }) =>
   prisma.post.findMany({
     where: { isDeleted: false },
     orderBy: { createdAt: "desc" },
@@ -24,20 +25,29 @@ export const findPosts = ({ skip = 0, take = 20 }) =>
     take,
     include: {
       author: { select: { id: true, name: true } },
-      votes: { select: { id: true } },
+      votes: {
+        where: { userId }, // 是否点赞
+        select: { id: true },
+      },
+      _count: {
+        select: { votes: true }, // 点赞总数
+      },
     },
   });
 
-/* 根据 id 查找 */
-export const findPostById = (postId) =>
+/* 帖子详情 */
+export const findPostById = (userId, postId) =>
   prisma.post.findFirst({
-    where: {
-      id: postId,
-      isDeleted: false,
-    },
+    where: { id: postId, isDeleted: false },
     include: {
       author: { select: { id: true, name: true } },
-      votes: { select: { id: true } },
+      votes: {
+        where: { userId },
+        select: { id: true },
+      },
+      _count: {
+        select: { votes: true },
+      },
       comments: {
         where: { parentId: null },
         orderBy: { createdAt: "desc" },
@@ -51,7 +61,7 @@ export const findPostById = (postId) =>
     },
   });
 
-/* 更新帖子 */
+/* 更新 */
 export const updatePostById = (postId, data) =>
   prisma.post.update({
     where: { id: postId },
@@ -59,10 +69,11 @@ export const updatePostById = (postId, data) =>
     include: {
       author: { select: { id: true, name: true } },
       votes: { select: { id: true } },
+      _count: { select: { votes: true } },
     },
   });
 
-/* 软删除 */
+/* 软删 */
 export const softDeletePost = (postId) =>
   prisma.post.update({
     where: { id: postId },
@@ -72,13 +83,14 @@ export const softDeletePost = (postId) =>
 /* 我的帖子 */
 export const findMyPosts = (userId) =>
   prisma.post.findMany({
-    where: {
-      authorId: userId,
-      isDeleted: false,
-    },
+    where: { authorId: userId, isDeleted: false },
     orderBy: { createdAt: "desc" },
     include: {
       author: { select: { id: true, name: true } },
-      votes: { select: { id: true } },
+      votes: {
+        where: { userId },
+        select: { id: true },
+      },
+      _count: { select: { votes: true } },
     },
   });

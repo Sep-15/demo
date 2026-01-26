@@ -15,9 +15,9 @@ export const createPost = catchAsync(async (req, res) => {
   res.status(201).json(data);
 });
 
-/* 帖子流 */
+/* 帖子流（带 isLiked） */
 export const getPosts = catchAsync(async (req, res) => {
-  const data = await getPostsService(req.query);
+  const data = await getPostsService(req.user.id, req.query);
   res.status(200).json(data);
 });
 
@@ -27,10 +27,10 @@ export const getMyPosts = catchAsync(async (req, res) => {
   res.status(200).json(data);
 });
 
-/* 帖子详情 */
+/* 帖子详情（带 isLiked） */
 export const getPostById = catchAsync(async (req, res) => {
   const postId = Number(req.params.id);
-  const data = await getPostByIdService(postId);
+  const data = await getPostByIdService(req.user.id, postId);
   res.status(200).json(data);
 });
 
@@ -41,7 +41,7 @@ export const updatePost = catchAsync(async (req, res) => {
   res.status(200).json(data);
 });
 
-/* 删除帖子（软删） */
+/* 删除帖子 */
 export const deletePost = catchAsync(async (req, res) => {
   const postId = Number(req.params.id);
   await deletePostService(req.user.id, postId);
