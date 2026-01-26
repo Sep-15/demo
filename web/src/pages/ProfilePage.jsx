@@ -1,7 +1,9 @@
-// File: src/pages/ProfilePage.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getUserProfileApi } from "../api/index";
+import { useAuth } from "../hooks/useAuth";
+import { FollowButton } from "../components/FollowButton";
+import { PostListView } from "../components/PostListView";
 
 const TABS = {
   POSTS: "posts",
@@ -9,6 +11,7 @@ const TABS = {
 };
 
 const ProfilePage = () => {
+  const auth = useAuth();
   const { userId } = useParams();
   const [profile, setProfile] = useState(null);
   const [activeTab, setActiveTab] = useState(TABS.POSTS);
@@ -36,6 +39,7 @@ const ProfilePage = () => {
   if (!profile) return <div className="p-4">用户不存在</div>;
 
   const { user, counts, posts, likedPosts } = profile;
+  const isSelf = auth.user && String(auth.user.id) === String(userId);
 
   const list = activeTab === TABS.POSTS ? posts : likedPosts;
 
@@ -45,6 +49,12 @@ const ProfilePage = () => {
       <div className="mb-6 rounded-md bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-semibold">{user.name}</h1>
         <p className="text-sm text-gray-500">{user.email}</p>
+
+        {!isSelf && (
+          <div className="mt-3">
+            <FollowButton id={userId} variant="profile" />
+          </div>
+        )}
 
         <div className="mt-4 flex gap-6 text-sm">
           <span>
@@ -81,30 +91,7 @@ const ProfilePage = () => {
         </button>
       </div>
 
-      {/* Content */}
-      <div className="space-y-4">
-        {list.length === 0 && (
-          <div className="rounded-md bg-white p-4 text-gray-500 shadow-sm">
-            暂无内容
-          </div>
-        )}
-
-        {list.map((post) => (
-          <div key={post.id} className="rounded-md bg-white p-4 shadow-sm">
-            {post.author && (
-              <div className="mb-1 text-sm text-gray-500">
-                来自 {post.author.name}
-              </div>
-            )}
-
-            <div className="mb-2 text-gray-900">{post.content}</div>
-
-            <div className="text-xs text-gray-400">
-              {new Date(post.createdAt).toLocaleString()} · 👍 {post.voteCount}
-            </div>
-          </div>
-        ))}
-      </div>
+      <PostListView posts={list} loading={false} hasMore={false} />
     </div>
   );
 };

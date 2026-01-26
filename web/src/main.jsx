@@ -6,12 +6,15 @@ import "./index.css";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { RouterProvider } from "react-router-dom";
 import Router from "./routes/Router.jsx";
+import { FollowProvider } from "./contexts/FollowContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={Router} />
-      <Toaster position="top-center" />
+      <FollowProvider>
+        <RouterProvider router={Router} />
+        <Toaster position="top-center" />
+      </FollowProvider>
     </AuthProvider>
   </StrictMode>,
 );

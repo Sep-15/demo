@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { getPostsApi } from "../api/index";
-import { PostItem } from "./PostItem";
+import { PostListView } from "./PostListView";
 const limit = 20;
 export const PostList = () => {
   const [page, setPage] = useState(1);
@@ -30,26 +30,11 @@ export const PostList = () => {
   };
 
   return (
-    <div className="space-y-3">
-      {posts.map((post) => (
-        <PostItem key={post.id} post={post} />
-      ))}
-      {loading && (
-        <div className="rounded-md bg-white p-4 text-sm text-gray-500 shadow-sm">
-          loading...
-        </div>
-      )}
-      {!loading && hasMore && (
-        <button
-          onClick={() => setPage((prev) => prev + 1)}
-          className="w-full rounded-md bg-gray-100 py-2 text-sm hover:bg-gray-200"
-        >
-          show more
-        </button>
-      )}
-      {!hasMore && (
-        <div className="text-center text-xs text-gray-400">no more </div>
-      )}
-    </div>
+    <PostListView
+      posts={posts}
+      loading={loading}
+      hasMore={hasMore}
+      onLoadMore={() => setPage((p) => p + 1)}
+    />
   );
 };

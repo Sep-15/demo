@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Avatar } from "./Avatar";
+import { FollowButton } from "./FollowButton";
 
 export const PostItem = ({ post, clickable = true }) => {
   const navigate = useNavigate();
@@ -13,6 +14,13 @@ export const PostItem = ({ post, clickable = true }) => {
           <Avatar name={post.author?.name} size="sm" />
           <div className="text-sm text-gray-500">
             {post.author?.name ?? "不愿意透露姓名的用户"}
+          </div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <FollowButton id={post.author.id} />
           </div>
         </div>
 
