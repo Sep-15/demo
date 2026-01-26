@@ -46,7 +46,7 @@ model Follow{
 model Post{
   id Int @id @default(autoincrement())
   content String @db.Text
-  url Json?
+  media Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDeleted Boolean @default(false)

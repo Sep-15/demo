@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar } from "./Avatar";
 import { FollowButton } from "./FollowButton";
@@ -5,6 +6,7 @@ import { VoteButton } from "./VoteButton";
 
 export const PostItem = ({ post, clickable = true }) => {
   const navigate = useNavigate();
+  const [preview, setPreview] = useState(null); // { type, url }
 
   const goProfile = (e) => {
     e.stopPropagation();
@@ -12,42 +14,120 @@ export const PostItem = ({ post, clickable = true }) => {
   };
 
   return (
-    <div>
-      <div
-        onClick={clickable ? () => navigate(`/posts/${post.id}`) : undefined}
-        className="cursor-pointer rounded-md bg-white p-4 shadow-sm hover:bg-gray-50"
-      >
-        {/* header */}
-        <div className="flex items-center gap-2">
-          <div className="cursor-pointer" onClick={goProfile}>
-            <Avatar name={post.author?.name} size="sm" />
+    <>
+      <div>
+        <div
+          onClick={clickable ? () => navigate(`/posts/${post.id}`) : undefined}
+          className="cursor-pointer rounded-md bg-white p-4 shadow-sm hover:bg-gray-50"
+        >
+          {/* header */}
+          <div className="flex items-center gap-2">
+            <div className="cursor-pointer" onClick={goProfile}>
+              <Avatar name={post.author?.name} size="sm" />
+            </div>
+
+            <div
+              className="cursor-pointer text-sm text-gray-500 hover:underline"
+              onClick={goProfile}
+            >
+              {post.author?.name ?? "不愿意透露姓名的用户"}
+            </div>
+
+            <div onClick={(e) => e.stopPropagation()}>
+              <FollowButton id={post.author.id} />
+            </div>
           </div>
 
-          <div
-            className="cursor-pointer text-sm text-gray-500 hover:underline"
-            onClick={goProfile}
-          >
-            {post.author?.name ?? "不愿意透露姓名的用户"}
+          {/* content */}
+          {post.content && (
+            <div className="mt-1 whitespace-pre-wrap text-gray-900">
+              {post.content}
+            </div>
+          )}
+
+          {/* media */}
+          {Array.isArray(post.media) && post.media.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {post.media.map((m, idx) => {
+                const url = m.cloudinary?.secure_url;
+                if (!url) return null;
+
+                return (
+                  <div
+                    key={idx}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreview({ type: m.type, url });
+                    }}
+                    className="overflow-hidden rounded-md border bg-black"
+                  >
+                    {m.type === "image" ? (
+                      <img
+                        src={url}
+                        alt=""
+                        loading="lazy"
+                        className="max-h-[240px] w-full object-cover"
+                      />
+                    ) : (
+                      <video
+                        src={url}
+                        preload="metadata"
+                        className="max-h-[240px] w-full object-cover"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* footer */}
+          <div className="mt-2 flex items-center gap-3 text-xs text-gray-400">
+            <VoteButton
+              postId={post.id}
+              initialLiked={post.isLiked}
+              initialCount={post.voteCount}
+            />
+            <span>{new Date(post.createdAt).toLocaleString()}</span>
           </div>
-
-          <div onClick={(e) => e.stopPropagation()}>
-            <FollowButton id={post.author.id} />
-          </div>
-        </div>
-
-        {/* content */}
-        <div className="mt-1 text-gray-900">{post.content}</div>
-
-        {/* footer */}
-        <div className="mt-2 flex items-center gap-3 text-xs text-gray-400">
-          <VoteButton
-            postId={post.id}
-            initialLiked={post.isLiked}
-            initialCount={post.voteCount}
-          />
-          <span>{new Date(post.createdAt).toLocaleString()}</span>
         </div>
       </div>
-    </div>
+
+      {/* ===== Lightbox ===== */}
+      {preview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+          onClick={() => setPreview(null)}
+        >
+          <div
+            className="relative max-h-[90vh] max-w-[90vw]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {preview.type === "image" ? (
+              <img
+                src={preview.url}
+                alt=""
+                className="max-h-[90vh] max-w-[90vw] object-contain"
+              />
+            ) : (
+              <video
+                src={preview.url}
+                controls
+                autoPlay
+                className="max-h-[90vh] max-w-[90vw]"
+              />
+            )}
+
+            {/* close */}
+            <button
+              onClick={() => setPreview(null)}
+              className="absolute -right-3 -top-3 rounded-full bg-white px-2 py-1 text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

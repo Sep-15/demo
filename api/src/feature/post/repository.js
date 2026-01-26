@@ -5,8 +5,8 @@ import { prisma } from "../../db.js";
 export const createPost = (authorId, data) =>
   prisma.post.create({
     data: {
-      content: data.content,
-      url: data.url ?? null,
+      content: data.content ?? null,
+      media: data.media ?? null, // ⭐ 核心
       authorId,
     },
     include: {
@@ -65,7 +65,10 @@ export const findPostById = (userId, postId) =>
 export const updatePostById = (postId, data) =>
   prisma.post.update({
     where: { id: postId },
-    data,
+    data: {
+      content: data.content,
+      media: data.media, // ⭐
+    },
     include: {
       author: { select: { id: true, name: true } },
       votes: { select: { id: true } },

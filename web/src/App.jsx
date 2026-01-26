@@ -1,6 +1,6 @@
 // File: src/App.jsx
 import { Suspense } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 
 const App = () => {
   return (
@@ -13,7 +13,12 @@ const App = () => {
 
       <div className="mx-auto max-w-[1280px] flex gap-4 px-4 py-4">
         <aside className="hidden md:block w-56 shrink-0">
-          <div className="rounded-md bg-white p-4 shadow-sm">Nav</div>
+          <NavLink
+            to="/"
+            className="block rounded-md bg-white p-4 shadow-sm cursor-pointer hover:bg-gray-50"
+          >
+            Posts
+          </NavLink>
         </aside>
         <main className="flex-1 min-w-0">
           <Suspense fallback={<div className="p-4">Loading...</div>}>

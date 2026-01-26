@@ -11,9 +11,14 @@ import { AppError } from "../../errors/AppError.js";
 
 /* 发帖 */
 export const createPostService = async (userId, payload) => {
-  if (!payload.content || payload.content.trim() === "") {
-    throw new AppError("CONTENT_REQUIRED", 400);
+  const hasContent =
+    typeof payload.content === "string" && payload.content.trim() !== "";
+  const hasMedia = Array.isArray(payload.media) && payload.media.length > 0;
+
+  if (!hasContent && !hasMedia) {
+    throw new AppError("CONTENT_OR_MEDIA_REQUIRED", 400);
   }
+
   return mapPost(await createPost(userId, payload));
 };
 
@@ -57,8 +62,8 @@ export const updatePostService = async (userId, postId, payload) => {
   if (post.author.id !== userId) throw new AppError("FORBIDDEN", 403);
 
   const data = {};
-  if (payload.content) data.content = payload.content;
-  if (payload.url !== undefined) data.url = payload.url;
+  if (payload.content !== undefined) data.content = payload.content;
+  if (payload.media !== undefined) data.media = payload.media;
 
   return mapPost(await updatePostById(postId, data));
 };
@@ -77,7 +82,7 @@ export const deletePostService = async (userId, postId) => {
 const mapPost = (p) => ({
   id: p.id,
   content: p.content,
-  url: p.url,
+  media: p.media, // ⭐ 前端 PostItem 直接用
   createdAt: p.createdAt,
   author: p.author,
   voteCount: p._count.votes,
