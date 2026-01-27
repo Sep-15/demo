@@ -5,7 +5,15 @@ import { errorHandle } from "./middleware/error.js";
 
 const app = express();
 
-app.use(cors());
+/* ===== CORS（必须在最前） ===== */
+const corsOptions = {
+  origin: "https://demo-pi-plum-86.vercel.app",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
