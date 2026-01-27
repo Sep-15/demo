@@ -19,39 +19,12 @@ const App = () => {
               className={({ isActive }) =>
                 `block rounded-lg p-4 text-lg transition-all duration-200 ${
                   isActive
-                    ? 'bg-[var(--paper-accent)] text-white'
-                    : 'text-[var(--paper-text)] hover:bg-[var(--paper-bg)]'
+                    ? "bg-[var(--paper-accent)] text-white"
+                    : "text-[var(--paper-text)] hover:bg-[var(--paper-bg)]"
                 }`
               }
             >
-              Home
-            </NavLink>
-
-            {/* Add more navigation items here */}
-            <NavLink
-              to="/profile"
-              className={({ isActive }) =>
-                `block rounded-lg p-4 text-lg transition-all duration-200 ${
-                  isActive
-                    ? 'bg-[var(--paper-accent)] text-white'
-                    : 'text-[var(--paper-text)] hover:bg-[var(--paper-bg)]'
-                }`
-              }
-            >
-              Profile
-            </NavLink>
-
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                `block rounded-lg p-4 text-lg transition-all duration-200 ${
-                  isActive
-                    ? 'bg-[var(--paper-accent)] text-white'
-                    : 'text-[var(--paper-text)] hover:bg-[var(--paper-bg)]'
-                }`
-              }
-            >
-              Settings
+              Back
             </NavLink>
           </nav>
         </aside>
