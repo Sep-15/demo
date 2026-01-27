@@ -22,12 +22,14 @@ export const CommentItem = ({ comment, postId, level, onRefresh }) => {
             </span>
           </div>
           <div className="mt-1 text-sm text-gray-800">{comment.content}</div>
-          <button
-            className="mt-1 text-xs text-blue-500 hover:underline"
-            onClick={() => setShowReply((v) => !v)}
-          >
-            reply
-          </button>
+          {level < 1 && (
+            <button
+              className="mt-1 text-xs text-blue-500 hover:underline"
+              onClick={() => setShowReply((v) => !v)}
+            >
+              reply
+            </button>
+          )}
           {showReply && (
             <div className="mt-2">
               <CommentForm
