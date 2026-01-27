@@ -17,7 +17,7 @@ const App = () => {
             to="/"
             className="block rounded-md bg-white p-4 shadow-sm cursor-pointer hover:bg-gray-50"
           >
-            Posts
+            Home
           </NavLink>
         </aside>
         <main className="flex-1 min-w-0">
@@ -25,9 +25,6 @@ const App = () => {
             <Outlet />
           </Suspense>
         </main>
-        <aside className="hidden lg:block w-72 shrink-0">
-          <div className="rounded-md bg-white p-4 shadow-sm">Pannel</div>
-        </aside>
       </div>
     </div>
   );
