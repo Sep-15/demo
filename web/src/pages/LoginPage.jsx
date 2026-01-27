@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth.js";
 
 const LoginPage = () => {
-  const { login, token } = useAuth;
+  const { login, token } = useAuth();
   const navigate = useNavigate();
 
   // 已登录用户不应再看到登录页
