@@ -18,16 +18,16 @@ export const PostItem = ({ post, clickable = true }) => {
       <div>
         <div
           onClick={clickable ? () => navigate(`/posts/${post.id}`) : undefined}
-          className="cursor-pointer rounded-md bg-white p-4 shadow-sm hover:bg-gray-50"
+          className="cursor-pointer rounded-xl bg-[var(--paper-card)] p-5 shadow-sm hover:bg-[var(--paper-bg)] border border-[var(--paper-border)]"
         >
           {/* header */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="cursor-pointer" onClick={goProfile}>
-              <Avatar name={post.author?.name} size="sm" />
+              <Avatar name={post.author?.name} size="md" />
             </div>
 
             <div
-              className="cursor-pointer text-sm text-gray-500 hover:underline"
+              className="cursor-pointer text-base text-[var(--paper-text-secondary)] hover:underline"
               onClick={goProfile}
             >
               {post.author?.name ?? "不愿意透露姓名的用户"}
@@ -40,14 +40,14 @@ export const PostItem = ({ post, clickable = true }) => {
 
           {/* content */}
           {post.content && (
-            <div className="mt-1 whitespace-pre-wrap text-gray-900">
+            <div className="mt-2 whitespace-pre-wrap text-[var(--paper-text)] text-base">
               {post.content}
             </div>
           )}
 
           {/* media */}
           {Array.isArray(post.media) && post.media.length > 0 && (
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-4 grid grid-cols-2 gap-3">
               {post.media.map((m, idx) => {
                 const url = m.cloudinary?.secure_url;
                 if (!url) return null;
@@ -59,20 +59,20 @@ export const PostItem = ({ post, clickable = true }) => {
                       e.stopPropagation();
                       setPreview({ type: m.type, url });
                     }}
-                    className="overflow-hidden rounded-md border bg-black"
+                    className="overflow-hidden rounded-xl border border-[var(--paper-border)] bg-[var(--paper-bg)]"
                   >
                     {m.type === "image" ? (
                       <img
                         src={url}
                         alt=""
                         loading="lazy"
-                        className="max-h-[240px] w-full object-cover"
+                        className="max-h-[280px] w-full object-cover"
                       />
                     ) : (
                       <video
                         src={url}
                         preload="metadata"
-                        className="max-h-[240px] w-full object-cover"
+                        className="max-h-[280px] w-full object-cover"
                       />
                     )}
                   </div>
@@ -82,7 +82,7 @@ export const PostItem = ({ post, clickable = true }) => {
           )}
 
           {/* footer */}
-          <div className="mt-2 flex items-center gap-3 text-xs text-gray-400">
+          <div className="mt-3 flex items-center gap-4 text-sm text-[var(--paper-text-secondary)]">
             <VoteButton
               postId={post.id}
               initialLiked={post.isLiked}
@@ -121,7 +121,7 @@ export const PostItem = ({ post, clickable = true }) => {
             {/* close */}
             <button
               onClick={() => setPreview(null)}
-              className="absolute -right-3 -top-3 rounded-full bg-white px-2 py-1 text-sm"
+              className="absolute -right-3 -top-3 rounded-full bg-white px-3 py-1 text-base"
             >
               ✕
             </button>

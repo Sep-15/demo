@@ -4,24 +4,59 @@ import { Outlet, NavLink } from "react-router-dom";
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="sticky top-0 z-50 h-14 bg-white border-b">
-        <div className="mx-auto max-w-[1280px] h-full flex items-center px-4">
-          <div className="text-lg font-semibold">Room</div>
+    <div className="min-h-screen bg-[var(--paper-bg)]">
+      <header className="sticky top-0 z-50 h-16 bg-[var(--paper-card)] border-b border-[var(--paper-border)] shadow-sm">
+        <div className="mx-auto max-w-[1280px] h-full flex items-center px-6">
+          <div className="text-xl font-bold text-[var(--paper-text)]">Room</div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1280px] flex gap-4 px-4 py-4">
-        <aside className="hidden md:block w-56 shrink-0">
-          <NavLink
-            to="/"
-            className="block rounded-md bg-white p-4 shadow-sm cursor-pointer hover:bg-gray-50"
-          >
-            Home
-          </NavLink>
+      <div className="mx-auto max-w-[1280px] flex gap-6 px-6 py-6">
+        <aside className="hidden md:block w-64 shrink-0 bg-[var(--paper-card)] rounded-xl border border-[var(--paper-border)] shadow-sm p-4">
+          <nav className="space-y-2">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `block rounded-lg p-4 text-lg transition-all duration-200 ${
+                  isActive
+                    ? 'bg-[var(--paper-accent)] text-white'
+                    : 'text-[var(--paper-text)] hover:bg-[var(--paper-bg)]'
+                }`
+              }
+            >
+              Home
+            </NavLink>
+
+            {/* Add more navigation items here */}
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `block rounded-lg p-4 text-lg transition-all duration-200 ${
+                  isActive
+                    ? 'bg-[var(--paper-accent)] text-white'
+                    : 'text-[var(--paper-text)] hover:bg-[var(--paper-bg)]'
+                }`
+              }
+            >
+              Profile
+            </NavLink>
+
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                `block rounded-lg p-4 text-lg transition-all duration-200 ${
+                  isActive
+                    ? 'bg-[var(--paper-accent)] text-white'
+                    : 'text-[var(--paper-text)] hover:bg-[var(--paper-bg)]'
+                }`
+              }
+            >
+              Settings
+            </NavLink>
+          </nav>
         </aside>
         <main className="flex-1 min-w-0">
-          <Suspense fallback={<div className="p-4">Loading...</div>}>
+          <Suspense fallback={<div className="p-4 text-lg">Loading...</div>}>
             <Outlet />
           </Suspense>
         </main>

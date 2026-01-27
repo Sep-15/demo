@@ -10,6 +10,7 @@ export const CreatePostBox = ({ onCreated }) => {
   const [mediaList, setMediaList] = useState([]);
   // [{ file, type: "image" | "video", preview }]
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const isEmpty = !content.trim() && mediaList.length === 0;
 
@@ -82,6 +83,7 @@ export const CreatePostBox = ({ onCreated }) => {
 
       setContent("");
       setMediaList([]);
+      setExpanded(false); // 提交后收起表单
       onCreated?.(data);
     } catch (err) {
       console.error(err);
@@ -93,96 +95,112 @@ export const CreatePostBox = ({ onCreated }) => {
   return (
     <form
       onSubmit={submit}
-      className="rounded-md bg-white p-4 shadow-sm space-y-3"
+      className="rounded-xl bg-[var(--paper-card)] p-5 shadow-sm space-y-3 border border-[var(--paper-border)]"
     >
-      {/* 文本 */}
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="写点什么…"
-        rows={3}
-        className="w-full resize-none rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-1 focus:ring-black"
-      />
-
-      {/* 多文件选择 */}
-      <input
-        type="file"
-        multiple
-        accept="image/*,video/*"
-        onChange={(e) => {
-          const files = Array.from(e.target.files || []);
-          if (!files.length) return;
-
-          const next = files.map((file) => ({
-            file,
-            type: file.type.startsWith("video") ? "video" : "image",
-            preview: URL.createObjectURL(file),
-          }));
-
-          setMediaList((prev) => [...prev, ...next]);
-        }}
-        className="block w-full text-sm"
-      />
-
-      {/* 预览区 */}
-      {mediaList.length > 0 && (
-        <div className="grid grid-cols-2 gap-2">
-          {mediaList.map((m, i) => (
-            <div key={i} className="relative rounded-md border bg-gray-50 p-1">
-              {m.type === "image" ? (
-                <img
-                  src={m.preview}
-                  alt="preview"
-                  className="h-40 w-full rounded-md object-cover"
-                />
-              ) : (
-                <video
-                  src={m.preview}
-                  controls
-                  className="h-40 w-full rounded-md object-cover"
-                />
-              )}
-
-              <button
-                type="button"
-                onClick={() =>
-                  setMediaList((prev) => prev.filter((_, idx) => idx !== i))
-                }
-                className="absolute right-1 top-1 rounded bg-black/70 px-2 py-0.5 text-xs text-white"
-              >
-                ×
-              </button>
-            </div>
-          ))}
+      {/* 默认只显示一行输入框，点击后展开 */}
+      {!expanded ? (
+        <div
+          onClick={() => setExpanded(true)}
+          className="w-full cursor-text rounded-lg border border-[var(--paper-border)] p-3 text-base focus-within:ring-1 focus-within:ring-[var(--paper-accent)] bg-[var(--paper-bg)] text-[var(--paper-text)] min-h-[44px] flex items-center"
+        >
+          <span className="text-[var(--paper-text-secondary)]">写点什么…</span>
         </div>
+      ) : (
+        <>
+          {/* 文本 */}
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="写点什么…"
+            rows={3}
+            autoFocus
+            className="w-full resize-none rounded-lg border border-[var(--paper-border)] p-3 text-base focus:outline-none focus:ring-1 focus:ring-[var(--paper-accent)] bg-[var(--paper-bg)] text-[var(--paper-text)]"
+          />
+
+          {/* 多文件选择 */}
+          <input
+            type="file"
+            multiple
+            accept="image/*,video/*"
+            onChange={(e) => {
+              const files = Array.from(e.target.files || []);
+              if (!files.length) return;
+
+              const next = files.map((file) => ({
+                file,
+                type: file.type.startsWith("video") ? "video" : "image",
+                preview: URL.createObjectURL(file),
+              }));
+
+              setMediaList((prev) => [...prev, ...next]);
+            }}
+            className="block w-full text-base"
+          />
+
+          {/* 预览区 */}
+          {mediaList.length > 0 && (
+            <div className="grid grid-cols-2 gap-3">
+              {mediaList.map((m, i) => (
+                <div key={i} className="relative rounded-lg border border-[var(--paper-border)] bg-[var(--paper-bg)] p-2">
+                  {m.type === "image" ? (
+                    <img
+                      src={m.preview}
+                      alt="preview"
+                      className="h-48 w-full rounded-lg object-cover"
+                    />
+                  ) : (
+                    <video
+                      src={m.preview}
+                      controls
+                      className="h-48 w-full rounded-lg object-cover"
+                    />
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMediaList((prev) => prev.filter((_, idx) => idx !== i))
+                    }
+                    className="absolute right-2 top-2 rounded bg-[var(--paper-accent)]/80 px-3 py-1 text-base text-white"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 操作区 */}
+          <div className="flex justify-between items-center pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                setContent("");
+                setMediaList([]);
+                if (!content.trim() && mediaList.length === 0) {
+                  setExpanded(false); // 如果清空后没有内容，则收起表单
+                }
+              }}
+              className="text-base text-[var(--paper-text-secondary)] hover:text-[var(--paper-text)]"
+            >
+              清空
+            </button>
+
+            <button
+              type="submit"
+              disabled={loading || isEmpty}
+              className={[
+                "rounded-lg px-5 py-2 text-base font-medium",
+                loading || isEmpty
+                  ? "cursor-not-allowed bg-gray-200 text-gray-400"
+                  : "bg-[var(--paper-accent)] text-white hover:bg-[var(--paper-accent)]/90",
+              ].join(" ")}
+            >
+              {loading ? "发布中…" : "发布"}
+            </button>
+          </div>
+        </>
       )}
-
-      {/* 操作区 */}
-      <div className="flex justify-between items-center">
-        <button
-          type="button"
-          onClick={() => {
-            setContent("");
-            setMediaList([]);
-          }}
-          className="text-sm text-gray-500 hover:text-black"
-        >
-          清空
-        </button>
-
-        <button
-          type="submit"
-          disabled={loading || isEmpty}
-          className={[
-            "rounded-md px-4 py-1.5 text-sm font-medium",
-            loading || isEmpty
-              ? "cursor-not-allowed bg-gray-200 text-gray-400"
-              : "bg-black text-white hover:bg-neutral-800",
-          ].join(" ")}
-        >
-          {loading ? "发布中…" : "发布"}
-        </button>
-      </div>
     </form>
   );
 };
