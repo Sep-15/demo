@@ -3,10 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { Avatar } from "./Avatar";
 import { FollowButton } from "./FollowButton";
 import { VoteButton } from "./VoteButton";
+import { useUserSidebar } from "../hooks/useUserSidebar";
 
 export const PostItem = ({ post, clickable = true }) => {
   const navigate = useNavigate();
+  const { showUser } = useUserSidebar();
   const [preview, setPreview] = useState(null); // { type, url }
+
+  const onClickPost = () => {
+    showUser(post.author.id);
+    navigate(`/posts/${post.id}`);
+  };
 
   const goProfile = (e) => {
     e.stopPropagation();
@@ -17,7 +24,7 @@ export const PostItem = ({ post, clickable = true }) => {
     <>
       <div>
         <div
-          onClick={clickable ? () => navigate(`/posts/${post.id}`) : undefined}
+          onClick={clickable ? onClickPost : undefined}
           className="cursor-pointer rounded-xl bg-[var(--paper-card)] p-5 shadow-sm hover:bg-[var(--paper-bg)] border border-[var(--paper-border)]"
         >
           {/* header */}
