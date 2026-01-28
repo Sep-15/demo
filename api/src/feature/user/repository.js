@@ -59,8 +59,9 @@ export const findUserPosts = (userId) =>
         select: { id: true, name: true },
       },
       votes: {
-        select: { id: true },
+        where: { userId },
       },
+      _count: { select: { votes: true } },
     },
   });
 

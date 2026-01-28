@@ -2,58 +2,63 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getUserProfileApi } from "../api/index";
 import { useAuth } from "../hooks/useAuth";
-import { FollowButton } from "../components/FollowButton";
+import { SidebarUserCard } from "../components/SidebarUserCard";
+import { PostItem } from "../components/PostItem";
 
 const ProfilePage = () => {
-  const auth = useAuth();
   const { userId } = useParams();
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  const { user } = useAuth();
+  const [data, setData] = useState(null);
+  const [posts, setPosts] = useState(null);
+  const [tab, setTab] = useState("posts");
   useEffect(() => {
-    if (!userId) return;
-    let ignore = false;
-
-    const fetchProfile = async () => {
-      const { data } = await getUserProfileApi(userId);
-      if (!ignore) {
-        setProfile(data);
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-    return () => {
-      ignore = true;
-    };
+    getUserProfileApi(userId)
+      .then(({ data }) => {
+        setData(data);
+        setPosts(data.posts);
+      })
+      .catch(console.error);
   }, [userId]);
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (!profile) return <div className="p-4">用户不存在</div>;
-
-  const { user, counts } = profile;
-  const isSelf = auth.user && String(auth.user.id) === String(userId);
+  const me = user?.id && data?.user?.id && user.id === data.user.id;
 
   return (
-    <div className="mx-auto max-w-[900px] px-4 py-6">
-      <div className="mb-6 rounded-md bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold">{user.name}</h1>
-        <p className="text-sm text-gray-500">{user.email}</p>
-
-        {!isSelf && (
-          <div className="mt-3">
-            <FollowButton id={userId} variant="profile" />
-          </div>
-        )}
-
-        <div className="mt-4 flex gap-6 text-sm">
-          <span>
-            <strong>{counts.followers}</strong> 被关注
-          </span>
-          <span>
-            <strong>{counts.following}</strong> 关注中
-          </span>
-        </div>
+    <div className="mx-auto max-w-2xl px-4 py-6">
+      <div className="block md:hidden">
+        <SidebarUserCard data={data} me={me} />
+      </div>
+      <div className="mt-6 flex gap-2 rounded-xl bg-[var(--paper-card)] p-1 border border-[var(--paper-border)]">
+        <button
+          onClick={() => {
+            setTab("posts");
+            setPosts(data.posts);
+          }}
+          className={[
+            "flex-1 rounded-lg py-2 text-sm font-medium transition",
+            tab === "posts"
+              ? "bg-white text-[var(--paper-text)] shadow"
+              : "text-[var(--paper-text-secondary)] hover:bg-[var(--paper-bg)]",
+          ]}
+        >
+          创建的posts
+        </button>
+        <button
+          onClick={() => {
+            setTab("liked");
+            setPosts(data.likedPosts);
+          }}
+          className={[
+            "flex-1 rounded-lg py-2 text-sm font-medium transition",
+            tab === "liked"
+              ? "bg-white text-[var(--paper-text)] shadow"
+              : "text-[var(--paper-text-secondary)] hover:bg-[var(--paper-bg)]",
+          ]}
+        >
+          点赞的posts
+        </button>
+      </div>
+      <div className="mt-6 space-y-4">
+        {posts && posts.map((post) => <PostItem key={post.id} post={post} />)}
       </div>
     </div>
   );

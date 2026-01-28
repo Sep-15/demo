@@ -4,11 +4,14 @@ import { Avatar } from "./Avatar";
 import { FollowButton } from "./FollowButton";
 import { VoteButton } from "./VoteButton";
 import { useUserSidebar } from "../hooks/useUserSidebar";
+import { useAuth } from "../hooks/useAuth";
 
 export const PostItem = ({ post, clickable = true }) => {
   const navigate = useNavigate();
   const { showUser } = useUserSidebar();
   const [preview, setPreview] = useState(null); // { type, url }
+  const { user } = useAuth();
+  const me = user?.id && post?.author?.id && user.id === post.author.id;
 
   const onClickPost = () => {
     showUser(post.author.id);
@@ -40,9 +43,11 @@ export const PostItem = ({ post, clickable = true }) => {
               {post.author?.name ?? "不愿意透露姓名的用户"}
             </div>
 
-            <div onClick={(e) => e.stopPropagation()}>
-              <FollowButton id={post.author.id} />
-            </div>
+            {!me && (
+              <div onClick={(e) => e.stopPropagation()}>
+                <FollowButton id={post.author.id} />
+              </div>
+            )}
           </div>
 
           {/* content */}

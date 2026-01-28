@@ -75,7 +75,8 @@ const mapPosts = (posts) =>
     content: p.content,
     createdAt: p.createdAt,
     author: p.author,
-    voteCount: p.votes.length,
+    voteCount: p._count?.votes ?? p.votes.length,
+    isLiked: p.votes.length > 0,
   }));
 
 const mapLikedPosts = (votes) =>
@@ -85,4 +86,5 @@ const mapLikedPosts = (votes) =>
     createdAt: v.post.createdAt,
     author: v.post.author,
     voteCount: v.post.votes.length,
+    isLiked: true,
   }));
