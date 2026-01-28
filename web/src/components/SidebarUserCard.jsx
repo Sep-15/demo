@@ -1,7 +1,7 @@
 import { Avatar } from "./Avatar";
 import { FollowButton } from "./FollowButton";
 
-export const SidebarUserCard = ({ data }) => {
+export const SidebarUserCard = ({ data, me }) => {
   if (!data) {
     return (
       <div className="flex items-center justify-center h-32 text-sm text-gray-400">
@@ -23,7 +23,7 @@ export const SidebarUserCard = ({ data }) => {
           </div>
         </div>
 
-        <FollowButton id={data.user.id} />
+        {!me && <FollowButton id={data.user.id} />}
       </div>
 
       <div className="flex justify-around text-center">
