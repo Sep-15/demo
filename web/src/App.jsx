@@ -1,10 +1,23 @@
 // File: src/App.jsx
-import { Suspense } from "react";
-import { Outlet, NavLink } from "react-router-dom";
+import { Suspense, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
+import { useAuth } from "./hooks/useAuth";
+import { useUserSidebar } from "./hooks/useUserSidebar";
 
 const App = () => {
+  const location = useLocation();
+  const { user } = useAuth();
+  const { showUser } = useUserSidebar();
+
+  useEffect(() => {
+    const is =
+      location.pathname.startsWith("/posts/") ||
+      location.pathname.startsWith("/profile/");
+    if (!is && user?.id) showUser(user.id);
+  }, [location.pathname, user?.id]);
+
   return (
     <div className="min-h-screen bg-[var(--paper-bg)]">
       <Header />

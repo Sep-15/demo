@@ -1,5 +1,5 @@
 // File: src/pages/Register.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
@@ -7,10 +7,6 @@ import { useAuth } from "../hooks/useAuth";
 const Register = () => {
   const { register, token } = useAuth();
   const navigate = useNavigate();
-
-  if (token) {
-    return <Navigate to="/" replace />;
-  }
 
   const [form, setForm] = useState({
     name: "",
@@ -20,6 +16,9 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (token) navigate("/", { replace: true });
+  }, [token, navigate]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({

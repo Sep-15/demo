@@ -3,7 +3,6 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
-import { UserSidebarProvider } from "../contexts/UserSidebarContext.jsx";
 
 const Home = lazy(() => import("../pages/HomePage.jsx"));
 const PostDetail = lazy(() => import("../pages/PostDetailPage.jsx"));
@@ -13,11 +12,7 @@ const Profile = lazy(() => import("../pages/ProfilePage.jsx"));
 const Router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <UserSidebarProvider>
-        <App />
-      </UserSidebarProvider>
-    ),
+    element: <App />,
     children: [
       {
         element: <ProtectedRoute />,
@@ -28,15 +23,15 @@ const Router = createBrowserRouter([
           { path: "profile/:userId", element: <Profile /> },
         ],
       },
-      {
-        path: "auth/login",
-        element: <Login />,
-      },
-      {
-        path: "auth/register",
-        element: <Register />,
-      },
     ],
+  },
+  {
+    path: "auth/login",
+    element: <Login />,
+  },
+  {
+    path: "auth/register",
+    element: <Register />,
   },
 ]);
 export default Router;

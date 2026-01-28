@@ -1,5 +1,5 @@
 // File: src/pages/LoginPage.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth.js";
@@ -8,17 +8,16 @@ const LoginPage = () => {
   const { login, token } = useAuth();
   const navigate = useNavigate();
 
-  // 已登录用户不应再看到登录页
-  if (token) {
-    return <Navigate to="/" replace />;
-  }
-
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (token) navigate("/", { replace: true });
+  }, [token, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

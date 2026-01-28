@@ -20,6 +20,7 @@ export const PostItem = ({ post, clickable = true }) => {
 
   const goProfile = (e) => {
     e.stopPropagation();
+    showUser(post.author.id);
     navigate(`/profile/${post.author.id}`);
   };
 

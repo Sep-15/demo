@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { followStatusApi, followUserApi, unfollowUserApi } from "../api";
 import { useFollow } from "../hooks/useFollow";
+import { useAuth } from "../hooks/useAuth";
 
 export const FollowButton = ({ id, variant = "post" }) => {
+  const { user } = useAuth();
   const { followMap, setFollowing } = useFollow();
   const isFollowing = !!followMap[id];
   const [loading, setLoading] = useState(false);
@@ -34,10 +36,11 @@ export const FollowButton = ({ id, variant = "post" }) => {
     }
   };
   useEffect(() => {
+    if (!user) return;
     if (!id) return;
     if (followMap[id] !== undefined) return;
     fetchFollowingState();
-  }, [id, followMap, setFollowing]);
+  }, [user, id, followMap]);
   const base =
     "inline-flex items-center justify-center rounded-full font-medium transition-all select-none";
 

@@ -7,13 +7,16 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { RouterProvider } from "react-router-dom";
 import Router from "./routes/Router.jsx";
 import { FollowProvider } from "./contexts/FollowContext.jsx";
+import { UserSidebarProvider } from "./contexts/UserSidebarContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <FollowProvider>
-        <RouterProvider router={Router} />
-        <Toaster position="top-center" />
+        <UserSidebarProvider>
+          <RouterProvider router={Router} />
+          <Toaster position="top-center" />
+        </UserSidebarProvider>
       </FollowProvider>
     </AuthProvider>
   </StrictMode>,
