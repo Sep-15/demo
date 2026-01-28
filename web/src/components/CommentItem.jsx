@@ -12,7 +12,7 @@ export const CommentItem = ({ comment, postId, level, onRefresh }) => {
       style={{ marginLeft: level * 12 }}
     >
       <div className="flex gap-2">
-        <Avatar name={comment.author?.name} />
+        <Avatar name={comment.author?.name} size={level > 0 ? "sm" : "md"} />
 
         <div className=" flex-1">
           <div className="text-xs text-gray-500">
