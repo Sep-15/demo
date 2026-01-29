@@ -7,14 +7,14 @@ import {
   countFollowing,
   findUserPosts,
   findLikedPosts,
-} from "./repository.js";
-import { AppError } from "../../errors/AppError.js";
+} from './repository.js';
+import { AppError } from '../../errors/AppError.js';
 
 /* 查看指定用户 */
 export const getUserProfile = async (userId) => {
   const user = await findUserById(userId);
   if (!user) {
-    throw new AppError("USER_NOT_FOUND", 404);
+    throw new AppError('USER_NOT_FOUND', 404);
   }
 
   const [followers, following, postsRaw, likedRaw] = await Promise.all([
@@ -39,13 +39,11 @@ export const getMyProfile = async (userId) => {
 
 /* 更新自己 */
 export const updateMyProfile = async (userId, payload) => {
-  const allowed = ["name"];
-  const data = Object.fromEntries(
-    Object.entries(payload).filter(([k]) => allowed.includes(k)),
-  );
+  const allowed = ['name'];
+  const data = Object.fromEntries(Object.entries(payload).filter(([k]) => allowed.includes(k)));
 
   if (Object.keys(data).length === 0) {
-    throw new AppError("NO_VALID_FIELDS", 400);
+    throw new AppError('NO_VALID_FIELDS', 400);
   }
 
   return updateUserById(userId, data);
@@ -60,7 +58,7 @@ export const deleteMyAccount = async (userId) => {
 export const getUserPosts = async (userId) => {
   const user = await findUserById(userId);
   if (!user) {
-    throw new AppError("USER_NOT_FOUND", 404);
+    throw new AppError('USER_NOT_FOUND', 404);
   }
 
   const postsRaw = await findUserPosts(userId);
@@ -73,6 +71,7 @@ const mapPosts = (posts) =>
   posts.map((p) => ({
     id: p.id,
     content: p.content,
+    media: p.media,
     createdAt: p.createdAt,
     author: p.author,
     voteCount: p._count?.votes ?? p.votes.length,
@@ -83,6 +82,7 @@ const mapLikedPosts = (votes) =>
   votes.map((v) => ({
     id: v.post.id,
     content: v.post.content,
+    media: v.post.media,
     createdAt: v.post.createdAt,
     author: v.post.author,
     voteCount: v.post.votes.length,

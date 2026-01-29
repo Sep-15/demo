@@ -1,5 +1,4 @@
 // File: src/socket/emitter.js
-import { getUserSockets } from "./online.js";
 
 let io = null;
 
@@ -10,8 +9,7 @@ export const initEmitter = (ioInstance) => {
 export const emitToUser = (userId, event, payload) => {
   if (!io) return;
 
-  const sockets = getUserSockets(userId);
-  for (const socketId of sockets) {
-    io.to(socketId).emit(event, payload);
-  }
+  io.to(`user:${userId}`).emit(event, payload);
+
+  console.log('[notify] emit notification:new to user:', userId);
 };
