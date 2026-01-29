@@ -1,7 +1,6 @@
 import { io } from 'socket.io-client';
 
-const URL = import.meta.env.URL || 'http://localhost:3000';
-const socket = io(URL, {
+const socket = io(import.meta.env.VITE_SOCKET_URL, {
   autoConnect: false,
   withCredentials: true,
 });
