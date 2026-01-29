@@ -8,9 +8,13 @@ import { initEmitter } from './emitter.js';
  * @param {import("http").Server} httpServer
  */
 export const initSocket = (httpServer) => {
+  const allowedOrigins = (process.env.CORS_ORIGINS || '')
+    .split(',') // 分割字符串
+    .map((o) => o.trim()) // 去除每个域名的空格
+    .filter(Boolean); // 移除空字符串
   const io = new Server(httpServer, {
     cors: {
-      origin: 'http://localhost:5173',
+      origin: allowedOrigins,
       credentials: true,
     },
   });
