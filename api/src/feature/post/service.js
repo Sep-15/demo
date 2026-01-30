@@ -1,22 +1,22 @@
-// File: src/feature/post/service.js
 import {
   createPost,
   findPosts,
-  findPostById,
+  findPostById, // 用于权限校验
+  findPostWithDetails, // 用于详情获取
   updatePostById,
   softDeletePost,
   findMyPosts,
-} from "./repository.js";
-import { AppError } from "../../errors/AppError.js";
+} from './repository.js';
+import { AppError } from '../../errors/AppError.js';
 
 /* 发帖 */
 export const createPostService = async (userId, payload) => {
   const hasContent =
-    typeof payload.content === "string" && payload.content.trim() !== "";
+    typeof payload.content === 'string' && payload.content.trim() !== '';
   const hasMedia = Array.isArray(payload.media) && payload.media.length > 0;
 
   if (!hasContent && !hasMedia) {
-    throw new AppError("CONTENT_OR_MEDIA_REQUIRED", 400);
+    throw new AppError('CONTENT_OR_MEDIA_REQUIRED', 400);
   }
 
   return mapPost(await createPost(userId, payload));
@@ -24,8 +24,8 @@ export const createPostService = async (userId, payload) => {
 
 /* 帖子流 */
 export const getPostsService = async (userId, query) => {
-  const page = Number(query.page ?? 1);
-  const limit = Number(query.limit ?? 20);
+  const page = Math.max(1, Number(query.page ?? 1));
+  const limit = Math.min(100, Number(query.limit ?? 20));
   const skip = (page - 1) * limit;
 
   const posts = await findPosts(userId, { skip, take: limit });
@@ -38,10 +38,10 @@ export const getMyPostsService = async (userId) => {
   return posts.map(mapPost);
 };
 
-/* 帖子详情 */
+/* 帖子详情：使用修正后的 findPostWithDetails */
 export const getPostByIdService = async (userId, postId) => {
-  const post = await findPostById(userId, postId);
-  if (!post) throw new AppError("POST_NOT_FOUND", 404);
+  const post = await findPostWithDetails(userId, postId);
+  if (!post) throw new AppError('POST_NOT_FOUND', 404);
 
   return {
     ...mapPost(post),
@@ -55,11 +55,11 @@ export const getPostByIdService = async (userId, postId) => {
   };
 };
 
-/* 更新 */
+/* 更新：权限检查使用 findPostById */
 export const updatePostService = async (userId, postId, payload) => {
-  const post = await findPostById(userId, postId);
-  if (!post) throw new AppError("POST_NOT_FOUND", 404);
-  if (post.author.id !== userId) throw new AppError("FORBIDDEN", 403);
+  const post = await findPostById(postId);
+  if (!post) throw new AppError('POST_NOT_FOUND', 404);
+  if (post.author.id !== userId) throw new AppError('FORBIDDEN', 403);
 
   const data = {};
   if (payload.content !== undefined) data.content = payload.content;
@@ -68,11 +68,11 @@ export const updatePostService = async (userId, postId, payload) => {
   return mapPost(await updatePostById(postId, data));
 };
 
-/* 删除 */
+/* 删除：权限检查使用 findPostById */
 export const deletePostService = async (userId, postId) => {
-  const post = await findPostById(userId, postId);
-  if (!post) throw new AppError("POST_NOT_FOUND", 404);
-  if (post.author.id !== userId) throw new AppError("FORBIDDEN", 403);
+  const post = await findPostById(postId);
+  if (!post) throw new AppError('POST_NOT_FOUND', 404);
+  if (post.author.id !== userId) throw new AppError('FORBIDDEN', 403);
 
   await softDeletePost(postId);
 };
@@ -82,9 +82,9 @@ export const deletePostService = async (userId, postId) => {
 const mapPost = (p) => ({
   id: p.id,
   content: p.content,
-  media: p.media, // ⭐ 前端 PostItem 直接用
+  media: p.media,
   createdAt: p.createdAt,
   author: p.author,
-  voteCount: p._count.votes,
-  isLiked: p.votes.length > 0,
+  voteCount: p._count?.votes ?? 0,
+  isLiked: Array.isArray(p.votes) && p.votes.length > 0,
 });
