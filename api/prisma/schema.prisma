@@ -169,5 +169,5 @@ enum NotificationType{
   COMMENT
   REPLY
   SYSTEM
-  
+  CONVERSATION
 }
