@@ -1,5 +1,4 @@
 import { prisma } from '../../db.js';
-import { me } from '../auth/service.js';
 
 const DETAIL_INCLUDE = {
   members: { include: { user: true } },
@@ -16,31 +15,30 @@ export const findPrivateGroup = ({ targetId, userId }) =>
       AND: [
         { members: { some: { userId: userId } } },
         { members: { some: { userId: targetId } } },
-        { members: { _count: { equals: 2 } } },
       ],
     },
     include: DETAIL_INCLUDE,
   });
 
-export const createPrivateGroup = ({ members, content, userId }) =>
+export const createPrivateGroup = ({ members, content, url, userId }) =>
   prisma.group.create({
     data: {
       isGroup: false,
       creator: { connect: { id: userId } },
       members: { create: members },
-      messages: { create: [{ content, senderId: userId }] },
+      messages: { create: [{ content, url, senderId: userId }] },
     },
     include: DETAIL_INCLUDE,
   });
 
-export const createGroup = ({ isGroup, name, members, userId, content }) =>
+export const createGroup = ({ isGroup, name, members, userId, content, url }) =>
   prisma.group.create({
     data: {
       isGroup,
       name,
       creator: { connect: { id: userId } },
       members: { create: members },
-      messages: { create: [{ content, senderId: userId }] },
+      messages: { create: [{ content, url, senderId: userId }] },
     },
     include: DETAIL_INCLUDE,
   });
@@ -59,7 +57,7 @@ export const findGroupById = ({ groupId }) =>
 
 export const createMessage = async ({ content, url, groupId, senderId }) => {
   const [message] = await prisma.$transaction([
-    prisma.messages.create({
+    prisma.groupMessage.create({
       data: { content, url, senderId, groupId },
       include: { sender: true },
     }),

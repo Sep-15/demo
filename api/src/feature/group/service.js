@@ -13,6 +13,7 @@ const mapGroupToConversation = (group, userId) => {
       ? {
           id: msg.id,
           content: msg.content,
+          url: msg.url,
           senderId: msg.senderId,
           senderName: msg.sender?.name,
           createdAt: msg.createdAt,
@@ -32,14 +33,17 @@ const mapGroupToConversation = (group, userId) => {
 export const createConversation = async ({ userId, payload }) => {
   let group;
 
-  const { isGroup, targetId, content, memberIds, name } = payload;
+  const { isGroup, targetId, content, url, memberIds, name } = payload;
 
   if (!isGroup) {
     const existing = await repo.findPrivateGroup({ userId, targetId });
     if (existing) return mapGroupToConversation(existing, userId);
 
+    if (!url && !content) throw new AppError('内容和附件不能同时为空', 400);
+
     group = await repo.createPrivateGroup({
       content,
+      url,
       userId,
       members: [{ userId: userId }, { userId: targetId }],
     });
@@ -77,6 +81,7 @@ export const getConversation = async ({ userId, groupId }) => {
   mapped.messages = group.messages.map((msg) => ({
     id: msg.id,
     content: msg.content,
+    url: msg.url,
     senderId: msg.senderId,
     senderName: msg.sender?.name,
     createdAt: msg.createdAt,
