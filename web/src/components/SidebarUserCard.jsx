@@ -1,5 +1,6 @@
-import { Avatar } from "./Avatar";
-import { FollowButton } from "./FollowButton";
+import { Avatar } from './Avatar';
+import { FollowButton } from './FollowButton';
+import { CreateConversationButton } from '../feature/group/CreateConversationButton';
 
 export const SidebarUserCard = ({ data, me }) => {
   if (!data) {
@@ -44,6 +45,8 @@ export const SidebarUserCard = ({ data, me }) => {
       <div className="text-xs text-gray-400">
         创建于{new Date(data.user.createdAt).toLocaleString()}
       </div>
+
+      {!me && <CreateConversationButton targetId={data.user.id} />}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useAuth } from '../hooks/useAuth';
 import { Avatar } from './Avatar';
-import { Logo } from './Logo';
+import { Nav } from './Nav';
 import { useNotification } from '../hooks/useNotification';
 import { useEffect, useRef, useState } from 'react';
 import { NotificationProview } from './NotificationPreview';
@@ -26,11 +26,13 @@ export const Header = () => {
     <header className="sticky top-0 z-50 h-16 bg-[var(--paper-card)] border-b border-[var(--paper-border)] backdrop-blur">
       {user && (
         <div className="mx-auto max-w-7xl h-full flex items-center justify-between px-6">
-          <Logo />
+          <Nav />
 
           <div className="flex items-center gap-3 rounded-full bg-[var(--paper-bg)] px-3 py-1.5">
             <Avatar name={user.name} size="sm" />
-            <span className="text-sm font-medium text-gray-800 max-w-30 truncate">{user.name}</span>
+            <span className="text-sm font-medium text-gray-800 max-w-30 truncate">
+              {user.name}
+            </span>
 
             {/* 🔔 + 弹层必须在同一个 relative 容器 */}
             <div ref={wrapperRef} className="relative">

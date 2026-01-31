@@ -9,17 +9,20 @@ import Router from './routes/Router.jsx';
 import { FollowProvider } from './contexts/FollowContext.jsx';
 import { UserSidebarProvider } from './contexts/UserSidebarContext.jsx';
 import { NotificationProvider } from './contexts/NotificationContext.jsx';
+import { ConversationProvider } from './contexts/GroupContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <NotificationProvider>
-        <FollowProvider>
-          <UserSidebarProvider>
-            <RouterProvider router={Router} />
-            <Toaster position="top-center" />
-          </UserSidebarProvider>
-        </FollowProvider>
+        <ConversationProvider>
+          <FollowProvider>
+            <UserSidebarProvider>
+              <RouterProvider router={Router} />
+              <Toaster position="top-center" />
+            </UserSidebarProvider>
+          </FollowProvider>
+        </ConversationProvider>
       </NotificationProvider>
     </AuthProvider>
   </StrictMode>

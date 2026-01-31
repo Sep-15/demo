@@ -4,24 +4,24 @@
  * 所有接口统一从这里导出
  * ================================ */
 
-import apiClient from "./axios";
+import apiClient from './axios';
 
 /* ---------- system ---------- */
-export const healthApi = () => apiClient.get("/health");
+export const healthApi = () => apiClient.get('/health');
 
 /* ---------- auth ---------- */
-export const loginApi = (data) => apiClient.post("/auth/login", data);
+export const loginApi = (data) => apiClient.post('/auth/login', data);
 
-export const registerApi = (data) => apiClient.post("/auth/register", data);
+export const registerApi = (data) => apiClient.post('/auth/register', data);
 
-export const meApi = () => apiClient.get("/auth/me");
+export const meApi = () => apiClient.get('/auth/me');
 
 /* ---------- user ---------- */
 export const getUserProfileApi = (userId) => apiClient.get(`/users/${userId}`);
 
-export const updateProfileApi = (data) => apiClient.patch("/users/me", data);
+export const updateProfileApi = (data) => apiClient.patch('/users/me', data);
 
-export const deleteMeApi = () => apiClient.delete("/users/me");
+export const deleteMeApi = () => apiClient.delete('/users/me');
 
 export const getUserPostsApi = (userId) =>
   apiClient.get(`/users/${userId}/posts`);
@@ -35,16 +35,16 @@ export const unfollowUserApi = (userId) =>
 export const followStatusApi = (userId) =>
   apiClient.get(`/follows/${userId}/status`);
 
-export const myFollowersApi = () => apiClient.get("/follows/me/followers");
+export const myFollowersApi = () => apiClient.get('/follows/me/followers');
 
-export const myFollowingApi = () => apiClient.get("/follows/me/following");
+export const myFollowingApi = () => apiClient.get('/follows/me/following');
 
 /* ---------- post ---------- */
-export const createPostApi = (data) => apiClient.post("/posts", data);
+export const createPostApi = (data) => apiClient.post('/posts', data);
 
-export const getPostsApi = (params) => apiClient.get("/posts", { params });
+export const getPostsApi = (params) => apiClient.get('/posts', { params });
 
-export const getMyPostsApi = () => apiClient.get("/posts/me");
+export const getMyPostsApi = () => apiClient.get('/posts/me');
 
 export const getPostByIdApi = (id) => apiClient.get(`/posts/${id}`);
 
@@ -54,7 +54,7 @@ export const updatePostApi = (id, data) =>
 export const deletePostApi = (id) => apiClient.delete(`/posts/${id}`);
 
 /* ---------- comment ---------- */
-export const createCommentApi = (data) => apiClient.post("/comments", data);
+export const createCommentApi = (data) => apiClient.post('/comments', data);
 /*
 data = {
   postId,
@@ -74,7 +74,7 @@ export const getCommentRepliesApi = (id) =>
   apiClient.get(`/comments/${id}/replies`);
 
 /* ---------- vote ---------- */
-export const votePostApi = (postId) => apiClient.post("/votes", { postId });
+export const votePostApi = (postId) => apiClient.post('/votes', { postId });
 
 export const unvotePostApi = (postId) => apiClient.delete(`/votes/${postId}`);
 
@@ -85,62 +85,26 @@ export const voteCountApi = (postId) => apiClient.get(`/votes/${postId}/count`);
 
 /* ---------- notification ---------- */
 export const getNotificationsApi = (params) =>
-  apiClient.get("/notifications", { params });
+  apiClient.get('/notifications', { params });
 
 export const unreadNotificationCountApi = () =>
-  apiClient.get("/notifications/unread-count");
+  apiClient.get('/notifications/unread-count');
 
 export const readNotificationApi = (id) =>
   apiClient.patch(`/notifications/${id}/read`);
 
 export const readAllNotificationsApi = () =>
-  apiClient.patch("/notifications/read-all");
+  apiClient.patch('/notifications/read-all');
 
 export const deleteNotificationApi = (id) =>
   apiClient.delete(`/notifications/${id}`);
 
-/* ---------- chat ---------- */
-export const sendChatMessageApi = (data) => apiClient.post("/chats", data);
-/*
-data = {
-  toUserId,
-  content
-}
-*/
+export const getConversationApi = (id) => apiClient.get(`/conversations/${id}`);
 
-export const getConversationsApi = () => apiClient.get("/chats/conversations");
+export const getConversationsApi = () => apiClient.get('/conversations');
 
-export const getChatWithUserApi = (userId) => apiClient.get(`/chats/${userId}`);
+export const createConversationApi = (data) =>
+  apiClient.post('/conversations', data);
 
-export const readChatApi = (id) => apiClient.patch(`/chats/${id}/read`);
-
-export const deleteChatApi = (id) => apiClient.delete(`/chats/${id}`);
-
-/* ---------- group ---------- */
-export const createGroupApi = (data) => apiClient.post("/groups", data);
-
-export const getMyGroupsApi = () => apiClient.get("/groups");
-
-export const getGroupApi = (groupId) => apiClient.get(`/groups/${groupId}`);
-
-export const joinGroupApi = (groupId) =>
-  apiClient.post(`/groups/${groupId}/join`);
-
-export const leaveGroupApi = (groupId) =>
-  apiClient.post(`/groups/${groupId}/leave`);
-
-export const markGroupReadApi = (groupId) =>
-  apiClient.patch(`/groups/${groupId}/read`);
-
-export const dissolveGroupApi = (groupId) =>
-  apiClient.delete(`/groups/${groupId}`);
-
-export const transferGroupOwnerApi = (groupId, userId) =>
-  apiClient.patch(`/groups/${groupId}/transfer/${userId}`);
-
-/* ---------- group message ---------- */
-export const sendGroupMessageApi = (groupId, data) =>
-  apiClient.post(`/groups/${groupId}/messages`, data);
-
-export const getGroupMessagesApi = (groupId, params) =>
-  apiClient.get(`/groups/${groupId}/messages`, { params });
+export const sendMessageApi = (id, data) =>
+  apiClient.post(`/conversations/${id}`, data);

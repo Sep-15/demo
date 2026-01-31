@@ -10,6 +10,12 @@ const Login = lazy(() => import('../pages/LoginPage.jsx'));
 const Register = lazy(() => import('../pages/Register.jsx'));
 const Profile = lazy(() => import('../pages/ProfilePage.jsx'));
 const Notification = lazy(() => import('../pages/NotificationsPage.jsx'));
+const Conversation = lazy(
+  () => import('../feature/group/ConversationPage.jsx')
+);
+const ConversationsList = lazy(
+  () => import('../feature/group/ConversationsListPage.jsx')
+);
 const Router = createBrowserRouter([
   {
     path: '/',
@@ -23,6 +29,8 @@ const Router = createBrowserRouter([
           { path: 'posts/:id', element: <PostDetail /> },
           { path: 'profile/:userId', element: <Profile /> },
           { path: 'notifications', element: <Notification /> },
+          { path: 'conversations', element: <ConversationsList /> },
+          { path: 'conversations/:id', element: <Conversation /> },
         ],
       },
     ],

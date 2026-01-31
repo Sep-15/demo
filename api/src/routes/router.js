@@ -1,156 +1,77 @@
 // File: src/routes/router.js
-import { Router } from "express";
-import { requireAuth } from "../middleware/requireAuth.js";
-
-/* auth */
-import { login, register, me } from "../feature/auth/controller.js";
-
-/* user */
-import {
-  profileController,
-  updateProfile,
-  deleteMe,
-  getUserPostsController,
-} from "../feature/user/controller.js";
-
-/* follow */
-import {
-  followUser,
-  unfollowUser,
-  followStatus,
-  myFollowers,
-  myFollowing,
-} from "../feature/follow/controller.js";
-
-/* post */
-import {
-  createPost,
-  getPosts,
-  getPostById,
-  updatePost,
-  deletePost,
-  getMyPosts,
-} from "../feature/post/controller.js";
-
-/* comment */
-import {
-  createComment,
-  getComment,
-  updateComment,
-  deleteComment,
-  getReplies,
-} from "../feature/comment/controller.js";
-
-/* vote */
-import {
-  votePost,
-  unvotePost,
-  voteStatus,
-  voteCount,
-} from "../feature/vote/controller.js";
-
-/* notification */
-import {
-  getNotifications,
-  unreadCount,
-  readNotification,
-  readAllNotifications,
-  deleteNotification,
-} from "../feature/notification/controller.js";
-
-/* chat */
-import {
-  sendMessage as sendChatMessage,
-  getConversations,
-  getChatWithUser,
-  readChat,
-  deleteChat,
-} from "../feature/chat/controller.js";
-
-/* group */
-import {
-  createGroup,
-  getGroup,
-  getMyGroups,
-  joinGroup,
-  leaveGroup,
-  dissolveGroup,
-  transferOwner,
-  markGroupRead,
-  sendGroupMessage,
-  getGroupMessages,
-} from "../feature/group/controller.js";
+import { Router } from 'express';
+import { requireAuth } from '../middleware/requireAuth.js';
+import * as auth from '../feature/auth/controller.js';
+import * as user from '../feature/user/controller.js';
+import * as follow from '../feature/follow/controller.js';
+import * as post from '../feature/post/controller.js';
+import * as comment from '../feature/comment/controller.js';
+import * as vote from '../feature/vote/controller.js';
+import * as notification from '../feature/notification/controller.js';
+import * as conversation from '../feature/group/controller.js';
 
 const router = Router();
 
-/* system */
-router.get("/health", (_, res) => res.json({ message: "ok" }));
+router.get('/health', (_, res) => res.json({ message: 'ok' }));
 
-/* auth */
-router.post("/auth/register", register);
-router.post("/auth/login", login);
-router.get("/auth/me", requireAuth, me);
+router.post('/auth/register', auth.register);
+router.post('/auth/login', auth.login);
+router.get('/auth/me', requireAuth, auth.me);
 
-/* user */
-router.get("/users/:userId", requireAuth, profileController);
-router.patch("/users/me", requireAuth, updateProfile);
-router.delete("/users/me", requireAuth, deleteMe);
-router.get("/users/:userId/posts", requireAuth, getUserPostsController);
+router.get('/users/:userId', requireAuth, user.profileController);
+router.patch('/users/me', requireAuth, user.updateProfile);
+router.delete('/users/me', requireAuth, user.deleteMe);
+router.get('/users/:userId/posts', requireAuth, user.getUserPostsController);
 
-/* follow */
-router.post("/follows/:userId", requireAuth, followUser);
-router.delete("/follows/:userId", requireAuth, unfollowUser);
-router.get("/follows/:userId/status", requireAuth, followStatus);
-router.get("/follows/me/followers", requireAuth, myFollowers);
-router.get("/follows/me/following", requireAuth, myFollowing);
+router.post('/follows/:userId', requireAuth, follow.followUser);
+router.delete('/follows/:userId', requireAuth, follow.unfollowUser);
+router.get('/follows/:userId/status', requireAuth, follow.followStatus);
+router.get('/follows/me/followers', requireAuth, follow.myFollowers);
+router.get('/follows/me/following', requireAuth, follow.myFollowing);
 
-/* post */
-router.post("/posts", requireAuth, createPost);
-router.get("/posts", requireAuth, getPosts);
-router.get("/posts/me", requireAuth, getMyPosts);
-router.get("/posts/:id", requireAuth, getPostById);
-router.patch("/posts/:id", requireAuth, updatePost);
-router.delete("/posts/:id", requireAuth, deletePost);
+router.post('/posts', requireAuth, post.createPost);
+router.get('/posts', requireAuth, post.getPosts);
+router.get('/posts/me', requireAuth, post.getMyPosts);
+router.get('/posts/:id', requireAuth, post.getPostById);
+router.patch('/posts/:id', requireAuth, post.updatePost);
+router.delete('/posts/:id', requireAuth, post.deletePost);
 
-/* comment */
-router.post("/comments", requireAuth, createComment);
-router.get("/comments/:id", requireAuth, getComment);
-router.patch("/comments/:id", requireAuth, updateComment);
-router.delete("/comments/:id", requireAuth, deleteComment);
-router.get("/comments/:id/replies", requireAuth, getReplies);
+router.post('/comments', requireAuth, comment.createComment);
+router.get('/comments/:id', requireAuth, comment.getComment);
+router.patch('/comments/:id', requireAuth, comment.updateComment);
+router.delete('/comments/:id', requireAuth, comment.deleteComment);
+router.get('/comments/:id/replies', requireAuth, comment.getReplies);
 
-/* vote */
-router.post("/votes", requireAuth, votePost);
-router.delete("/votes/:postId", requireAuth, unvotePost);
-router.get("/votes/:postId/status", requireAuth, voteStatus);
-router.get("/votes/:postId/count", requireAuth, voteCount);
+router.post('/votes', requireAuth, vote.votePost);
+router.delete('/votes/:postId', requireAuth, vote.unvotePost);
+router.get('/votes/:postId/status', requireAuth, vote.voteStatus);
+router.get('/votes/:postId/count', requireAuth, vote.voteCount);
 
-/* notification */
-router.get("/notifications", requireAuth, getNotifications);
-router.get("/notifications/unread-count", requireAuth, unreadCount);
-router.patch("/notifications/:id/read", requireAuth, readNotification);
-router.patch("/notifications/read-all", requireAuth, readAllNotifications);
-router.delete("/notifications/:id", requireAuth, deleteNotification);
+router.get('/notifications', requireAuth, notification.getNotifications);
+router.get(
+  '/notifications/unread-count',
+  requireAuth,
+  notification.unreadCount
+);
+router.patch(
+  '/notifications/:id/read',
+  requireAuth,
+  notification.readNotification
+);
+router.patch(
+  '/notifications/read-all',
+  requireAuth,
+  notification.readAllNotifications
+);
+router.delete(
+  '/notifications/:id',
+  requireAuth,
+  notification.deleteNotification
+);
 
-/* chat */
-router.post("/chats", requireAuth, sendChatMessage);
-router.get("/chats/conversations", requireAuth, getConversations);
-router.get("/chats/:userId", requireAuth, getChatWithUser);
-router.patch("/chats/:id/read", requireAuth, readChat);
-router.delete("/chats/:id", requireAuth, deleteChat);
-
-/* group */
-router.post("/groups", requireAuth, createGroup);
-router.get("/groups", requireAuth, getMyGroups);
-router.get("/groups/:groupId", requireAuth, getGroup);
-router.post("/groups/:groupId/join", requireAuth, joinGroup);
-router.post("/groups/:groupId/leave", requireAuth, leaveGroup);
-router.patch("/groups/:groupId/read", requireAuth, markGroupRead);
-router.delete("/groups/:groupId", requireAuth, dissolveGroup);
-router.patch("/groups/:groupId/transfer/:userId", requireAuth, transferOwner);
-
-/* group message */
-router.post("/groups/:groupId/messages", requireAuth, sendGroupMessage);
-router.get("/groups/:groupId/messages", requireAuth, getGroupMessages);
+router.post('/conversations', requireAuth, conversation.createConversation);
+router.get('/conversations', requireAuth, conversation.getConversations);
+router.post('/conversations/:id', requireAuth, conversation.sendMessage);
+router.get('/conversations/:id', requireAuth, conversation.getConversation);
 
 export default router;
