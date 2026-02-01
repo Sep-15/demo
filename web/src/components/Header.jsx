@@ -3,7 +3,7 @@ import { Avatar } from './Avatar';
 import { Nav } from './Nav';
 import { useNotification } from '../hooks/useNotification';
 import { useEffect, useRef, useState } from 'react';
-import { NotificationProview } from './NotificationPreview';
+import { NotificationPreview } from './NotificationPreview';
 
 export const Header = () => {
   const { logout, user } = useAuth();
@@ -23,12 +23,14 @@ export const Header = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 h-16 bg-[var(--paper-card)] border-b border-[var(--paper-border)] backdrop-blur">
+    <header className="sticky top-0 z-50 h-16 bg-(--paper-card) border-b border-(--paper-border) backdrop-blur">
       {user && (
         <div className="mx-auto max-w-7xl h-full flex items-center justify-between px-6">
-          <Nav />
+          <div className="flex items-center">
+            <Nav />
+          </div>
 
-          <div className="flex items-center gap-3 rounded-full bg-[var(--paper-bg)] px-3 py-1.5">
+          <div className="flex items-center gap-3">
             <Avatar name={user.name} size="sm" />
             <span className="text-sm font-medium text-gray-800 max-w-30 truncate">
               {user.name}
@@ -50,7 +52,7 @@ export const Header = () => {
 
               {open && (
                 <div className="absolute right-0 mt-2 w-80 z-50">
-                  <NotificationProview />
+                  <NotificationPreview />
                 </div>
               )}
             </div>

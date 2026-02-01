@@ -8,7 +8,7 @@ export const PostListView = ({ posts, loading, hasMore, onLoadMore }) => {
       ))}
 
       {loading && (
-        <div className="rounded-xl bg-[var(--paper-card)] p-5 text-base text-[var(--paper-text-secondary)] shadow-sm border border-[var(--paper-border)]">
+        <div className="rounded-xl bg-(--paper-card) p-5 text-base text-(--paper-text-secondary) shadow-sm border border-(--paper-border)">
           loading...
         </div>
       )}
@@ -16,14 +16,14 @@ export const PostListView = ({ posts, loading, hasMore, onLoadMore }) => {
       {!loading && hasMore && (
         <button
           onClick={onLoadMore}
-          className="w-full rounded-xl bg-[var(--paper-bg)] py-3 text-base hover:bg-[var(--paper-card)] border border-[var(--paper-border)] text-[var(--paper-text)]"
+          className="w-full rounded-xl bg-(--paper-bg) py-3 text-base hover:bg-(--paper-card) border border-(--paper-border) text-(--paper-text)"
         >
           show more
         </button>
       )}
 
       {!hasMore && (
-        <div className="text-center text-sm text-[var(--paper-text-secondary)] py-2">no more</div>
+        <div className="text-center text-sm text-(--paper-text-secondary) py-2">no more</div>
       )}
     </div>
   );

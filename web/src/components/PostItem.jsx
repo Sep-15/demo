@@ -29,7 +29,7 @@ export const PostItem = ({ post, clickable = true }) => {
       <div>
         <div
           onClick={clickable ? onClickPost : undefined}
-          className="cursor-pointer rounded-xl bg-[var(--paper-card)] p-5 shadow-sm hover:bg-[var(--paper-bg)] border border-[var(--paper-border)]"
+          className="cursor-pointer rounded-xl bg-(--paper-card) p-5 shadow-sm hover:bg-(--paper-bg) border border-(--paper-border)"
         >
           {/* header */}
           <div className="flex items-center gap-3">
@@ -38,7 +38,7 @@ export const PostItem = ({ post, clickable = true }) => {
             </div>
 
             <div
-              className="cursor-pointer text-base text-[var(--paper-text-secondary)] hover:underline"
+              className="cursor-pointer text-base text-(--paper-text-secondary) hover:underline"
               onClick={goProfile}
             >
               {post.author?.name ?? "不愿意透露姓名的用户"}
@@ -53,7 +53,7 @@ export const PostItem = ({ post, clickable = true }) => {
 
           {/* content */}
           {post.content && (
-            <div className="mt-2 whitespace-pre-wrap text-[var(--paper-text)] text-base">
+            <div className="mt-2 whitespace-pre-wrap text-(--paper-text) text-base">
               {post.content}
             </div>
           )}
@@ -72,7 +72,7 @@ export const PostItem = ({ post, clickable = true }) => {
                       e.stopPropagation();
                       setPreview({ type: m.type, url });
                     }}
-                    className="overflow-hidden rounded-xl border border-[var(--paper-border)] bg-[var(--paper-bg)]"
+                    className="overflow-hidden rounded-xl border border-(--paper-border) bg-(--paper-bg)"
                   >
                     {m.type === "image" ? (
                       <img
@@ -95,7 +95,7 @@ export const PostItem = ({ post, clickable = true }) => {
           )}
 
           {/* footer */}
-          <div className="mt-3 flex items-center gap-4 text-sm text-[var(--paper-text-secondary)]">
+          <div className="mt-3 flex items-center gap-4 text-sm text-(--paper-text-secondary)">
             <VoteButton
               postId={post.id}
               initialLiked={post.isLiked}

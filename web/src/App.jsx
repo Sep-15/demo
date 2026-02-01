@@ -32,7 +32,7 @@ const App = () => {
     <div className="h-screen flex flex-col overflow-hidden bg-(--paper-bg)">
       <Header />
 
-      <div className="flex-1 w-full max-w-7xl flex gap-6 px-6 py-6 overflow-hidden">
+      <div className="flex-1 max-w-7xl mx-auto w-full flex gap-6 px-6 py-6 overflow-hidden">
         <main className="flex-1 min-w-0 overflow-y-auto">
           <Suspense fallback={<div className="p-4 text-lg">Loading...</div>}>
             <Outlet />

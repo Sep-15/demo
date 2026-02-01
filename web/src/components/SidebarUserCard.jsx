@@ -1,8 +1,10 @@
 import { Avatar } from './Avatar';
 import { FollowButton } from './FollowButton';
 import { CreateConversationButton } from '../feature/group/CreateConversationButton';
-
+import { useLocation } from 'react-router-dom';
 export const SidebarUserCard = ({ data, me }) => {
+  const location = useLocation();
+  const isConversationPage = location.pathname.startsWith('/conversations/');
   if (!data) {
     return (
       <div className="flex items-center justify-center h-32 text-sm text-gray-400">
@@ -46,7 +48,9 @@ export const SidebarUserCard = ({ data, me }) => {
         创建于{new Date(data.user.createdAt).toLocaleString()}
       </div>
 
-      {!me && <CreateConversationButton targetId={data.user.id} />}
+      {!me && !isConversationPage && (
+        <CreateConversationButton targetId={data.user.id} />
+      )}
     </div>
   );
 };

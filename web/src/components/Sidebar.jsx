@@ -9,7 +9,7 @@ export const Sidebar = () => {
     user?.id && displayData?.user?.id && user.id === displayData.user.id;
   return (
     <aside className=" hidden md:block w-80 shrink-0 space-y-4">
-      <div className="bg-[var(--paper-card)] rounded-2xl shadow-md p-4">
+      <div className="bg-(--paper-card) rounded-2xl shadow-md p-4">
         <SidebarUserCard data={displayData} me={me} />
       </div>
     </aside>

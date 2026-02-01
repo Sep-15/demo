@@ -3,7 +3,7 @@ import { getNotificationsApi } from '../api';
 import socket from '../socket';
 import { useNavigate } from 'react-router-dom';
 
-export const NotificationProview = () => {
+export const NotificationPreview = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -33,7 +33,9 @@ export const NotificationProview = () => {
 
       {loading && <div className="p-4 text-sm text-gray-500">Loading...</div>}
 
-      {!loading && list.length === 0 && <div className="p-4 text-sm text-gray-500">暂无通知</div>}
+      {!loading && list.length === 0 && (
+        <div className="p-4 text-sm text-gray-500">暂无通知</div>
+      )}
 
       <ul className="max-h-96 overflow-y-auto">
         {list.map((n) => (

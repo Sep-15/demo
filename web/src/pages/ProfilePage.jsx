@@ -36,7 +36,7 @@ const ProfilePage = () => {
       <div className="block md:hidden">
         <SidebarUserCard data={data} me={me} />
       </div>
-      <div className="mt-6 flex gap-2 rounded-xl bg-[var(--paper-card)] p-1 border border-[var(--paper-border)]">
+      <div className="mt-6 flex gap-2 rounded-xl bg-(--paper-card) p-1 border border-(--paper-border)">
         <button
           onClick={() => {
             setTab('posts');
@@ -45,8 +45,8 @@ const ProfilePage = () => {
           className={[
             'flex-1 rounded-lg py-2 text-sm font-medium transition',
             tab === 'posts'
-              ? 'bg-white text-[var(--paper-text)] shadow'
-              : 'text-[var(--paper-text-secondary)] hover:bg-[var(--paper-bg)]',
+              ? 'bg-white text-(--paper-text) shadow'
+              : 'text-(--paper-text-secondary) hover:bg-(--paper-bg)',
           ]}
         >
           创建的posts
@@ -59,8 +59,8 @@ const ProfilePage = () => {
           className={[
             'flex-1 rounded-lg py-2 text-sm font-medium transition',
             tab === 'liked'
-              ? 'bg-white text-[var(--paper-text)] shadow'
-              : 'text-[var(--paper-text-secondary)] hover:bg-[var(--paper-bg)]',
+              ? 'bg-white text-(--paper-text) shadow'
+              : 'text-(--paper-text-secondary) hover:bg-(--paper-bg)',
           ]}
         >
           点赞的posts
