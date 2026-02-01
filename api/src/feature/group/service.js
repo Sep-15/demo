@@ -1,4 +1,6 @@
 import { AppError } from '../../errors/AppError.js';
+import { notify } from '../notification/service.js';
+import { emitToGroup } from '../../socket/emitter.js';
 import * as repo from './repository.js';
 
 const mapGroupToConversation = (group, userId) => {
@@ -24,6 +26,7 @@ const mapGroupToConversation = (group, userId) => {
     id: group.id,
     isGroup: group.isGroup,
     title: isPrivate ? otherMember?.user?.name || '佚名' : group.name,
+    sidebarId: isPrivate && otherMember?.user?.id,
     lastMessage: formatMessage(group.messages[0]),
     memberCount: group.members.length,
     updatedAt: group.updatedAt,
@@ -47,12 +50,27 @@ export const createConversation = async ({ userId, payload }) => {
       userId,
       members: [{ userId: userId }, { userId: targetId }],
     });
+
+    await notify({
+      type: 'CONVERSATION',
+      recipientId: targetId,
+      actorId: userId,
+    });
   } else {
     const members = [
       { userId: userId, role: 'OWNER' },
       ...memberIds.map((id) => ({ userId: id })),
     ];
     group = await repo.createGroup({ isGroup, name, members, content, userId });
+    await Promise.all(
+      memberIds.map((id) =>
+        notify({
+          type: 'CONVERSATION',
+          recipientId: id,
+          actorId: userId,
+        })
+      )
+    );
   }
 
   return mapGroupToConversation(group, userId);
@@ -66,12 +84,26 @@ export const getConversations = async ({ userId }) => {
 export const sendMessage = async ({ userId, groupId, payload }) => {
   const { content = null, url = null } = payload;
   if (!content && !url) throw new AppError('url和content不能同时为空', 400);
-  return await repo.createMessage({
+  const message = await repo.createMessage({
     content,
     url,
     groupId: Number(groupId),
     senderId: userId,
   });
+
+  const broadcastData = {
+    id: message.id,
+    content: message.content,
+    url: message.url,
+    senderId: message.sender.id,
+    senderName: message.sender?.name || '未知',
+    createdAt: message.createdAt,
+    groupId: Number(groupId),
+  };
+
+  emitToGroup(groupId, 'message:new', broadcastData);
+
+  return message;
 };
 
 export const getConversation = async ({ userId, groupId }) => {

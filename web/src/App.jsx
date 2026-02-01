@@ -29,11 +29,11 @@ const App = () => {
   }, [location.pathname, user?.id, showUser]);
 
   return (
-    <div className="min-h-screen bg-(--paper-bg)">
+    <div className="h-screen flex flex-col overflow-hidden bg-(--paper-bg)">
       <Header />
 
-      <div className="mx-auto max-w-7xl flex gap-6 px-6 py-6">
-        <main className="flex-1 min-w-0">
+      <div className="flex-1 w-full max-w-7xl flex gap-6 px-6 py-6 overflow-hidden">
+        <main className="flex-1 min-w-0 overflow-y-auto">
           <Suspense fallback={<div className="p-4 text-lg">Loading...</div>}>
             <Outlet />
           </Suspense>

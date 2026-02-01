@@ -2,6 +2,7 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { initEmitter } from './emitter.js';
+import { findGroups } from '../feature/group/repository.js';
 
 /**
  * Socket.IO 初始化
@@ -42,31 +43,25 @@ export const initSocket = (httpServer) => {
   });
 
   /* ---------- 连接 ---------- */
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     const userId = socket.user.sub;
     console.log('[socket] connected userId =', userId);
     console.log('[socket] socket.id =', socket.id);
 
     socket.join(`user:${userId}`);
     console.log('[socket] joined room', `user:${userId}`);
-    /* ---------- 群相关 ---------- */
 
-    /**
-     * 加入群房间
-     * 前端在 HTTP join 成功后调用
-     */
-    socket.on('group:join', ({ groupId }) => {
-      if (!groupId) return;
-      socket.join(`group:${groupId}`);
-    });
-
-    /**
-     * 离开群房间
-     */
-    socket.on('group:leave', ({ groupId }) => {
-      if (!groupId) return;
-      socket.leave(`group:${groupId}`);
-    });
+    try {
+      const groups = await findGroups(userId);
+      const ids = groups.map((g) => g.id);
+      ids.forEach((id) => socket.join(`group:${id}`));
+      console.log(
+        `[socket] user ${userId} auto-joined ${ids.length} groups:`,
+        ids
+      );
+    } catch (error) {
+      console.error('[socket] auto-join groups failed:', error);
+    }
 
     /**
      * 群消息已读同步
@@ -78,15 +73,6 @@ export const initSocket = (httpServer) => {
       socket.to(`group:${groupId}`).emit('group:read', {
         groupId,
         userId,
-      });
-    });
-
-    /* ---------- 私聊已读（预留） ---------- */
-    socket.on('chat:read', ({ targetUserId }) => {
-      if (!targetUserId) return;
-
-      socket.to(`user:${targetUserId}`).emit('chat:read', {
-        fromUserId: userId,
       });
     });
 
