@@ -80,9 +80,11 @@ const ConversationPage = () => {
             className={`flex ${m.isMe ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`p-3 rounded-lg max-w-[70%] ${m.isMe ? 'bg-(--paper-accent) text-(--paper-card)' : 'bg-(--paper-card) text-(--paper-text) border border-(--paper-border)'}`}
+              className={`flex items-baseline gap-4 p-3 rounded-lg max-w-[70%] ${m.isMe ? 'bg-(--paper-accent) text-(--paper-card)' : 'bg-(--paper-card) text-(--paper-text) border border-(--paper-border)'}`}
             >
-              <div className="text-xs opacity-70 mb-1">{m.senderName}</div>
+              {!m.isMe && data.isGroup && (
+                <div className="text-xs opacity-70 mb-1">{m.senderName}</div>
+              )}
               <div>{m.content}</div>
               <div className="text-xs mt-1 text-right opacity-70">
                 {new Date(m.createdAt).toLocaleTimeString([], {
