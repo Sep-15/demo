@@ -10,7 +10,7 @@ export const Header = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-50 h-16 bg-(--paper-card) border-b border-(--paper-border) backdrop-blur">
+    <header className="sticky flex-none top-0 z-50 h-16 bg-(--paper-card) border-b border-(--paper-border) backdrop-blur">
       {user && (
         <div className="mx-auto max-w-7xl h-full flex items-center justify-between px-6">
           <div className="flex items-center">

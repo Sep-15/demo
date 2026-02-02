@@ -7,6 +7,7 @@ import { useUserSidebar } from '../../hooks/useUserSidebar';
 import { useAuth } from '../../hooks/useAuth';
 import { Avatar } from '../../components/Avatar';
 import { MediaInput } from './MediaInput';
+import { uploadToCloudinary } from '../../utils/uploadCloudinary';
 
 const ConversationPage = () => {
   const { user } = useAuth();
@@ -16,6 +17,8 @@ const ConversationPage = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
+  const [mediaList, setMediaList] = useState([]);
+  const [preview, setPreview] = useState(null);
   const bottomRef = useRef(null);
   const { showUser } = useUserSidebar();
   const groupedMessages = useMemo(
@@ -67,26 +70,61 @@ const ConversationPage = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [data?.messages]);
 
-  const onClick = async () => {
-    if (loading || !content.trim()) return;
-    setLoading(true);
-    try {
-      await sendMessageApi(id, { content });
-      setContent('');
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
+  const handleFileSelect = (files) => {
+    const nextMedia = files.map((file) => ({
+      file,
+      type: file.type.startsWith('video') ? 'video' : 'image',
+      preview: URL.createObjectURL(file),
+    }));
+
+    setMediaList((prev) => [...prev, ...nextMedia]);
   };
 
-  const handleMediaUpload = async (results) => {
-    for (const item of results) {
-      try {
-        await sendMessageApi(id, { url: item });
-      } catch (error) {
-        console.error('发送媒体消息失败:', error);
+  const removeMedia = (index) => {
+    URL.revokeObjectURL(mediaList[index].preview);
+    setMediaList((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSend = async () => {
+    if (loading) return;
+
+    const hasContent = content.trim();
+    const hasMedia = mediaList.length > 0;
+    if (!hasContent && !hasMedia) return;
+
+    setLoading(true);
+    try {
+      if (hasMedia) {
+        const uploadedMedia = await Promise.all(
+          mediaList.map(async (m) => {
+            const uploaded = await uploadToCloudinary(m.file, m.type);
+            return {
+              type: m.type,
+              cloudinary: {
+                public_id: uploaded.public_id,
+                secure_url: uploaded.secure_url,
+                width: uploaded.width,
+                height: uploaded.height,
+                format: uploaded.format,
+                bytes: uploaded.bytes,
+                duration: uploaded.duration,
+              },
+            };
+          })
+        );
+        for (const item of uploadedMedia) {
+          await sendMessageApi(id, { url: item });
+        }
+        mediaList.forEach((m) => URL.revokeObjectURL(m.preview));
+        setMediaList([]);
       }
+
+      if (hasContent) await sendMessageApi(id, { content });
+      setContent('');
+    } catch (error) {
+      console.error('发送失败:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,7 +132,7 @@ const ConversationPage = () => {
 
   return (
     <div className="flex flex-col bg-(--paper-bg)">
-      <header className=" text-center flex-none sticky z-10 bg-(--paper-bg) top-0 block lg:hidden font-bold">
+      <header className=" text-center flex-none sticky z-10 top-16 block lg:hidden font-bold">
         {data.title}
       </header>
       <main className="flex-1 p-4 space-y-4">
@@ -123,7 +161,15 @@ const ConversationPage = () => {
                     </div>
                   )}
                   {m.url && (
-                    <div className="mb-2 overflow-hidden rounded-md">
+                    <div
+                      className="mb-2 rounded-md"
+                      onClick={() =>
+                        setPreview({
+                          type: m.url.type,
+                          url: m.url.cloudinary.secure_url,
+                        })
+                      }
+                    >
                       {m.url.type === 'image' ? (
                         <img
                           src={m.url.cloudinary.secure_url}
@@ -154,25 +200,93 @@ const ConversationPage = () => {
 
         <div ref={bottomRef} />
       </main>
-      <footer className="flex-none sticky bg-(--paper-bg) bottom-0 z-10 border-t border-(--paper-border)">
-        <MediaInput onUploadSuccess={handleMediaUpload} />
-        <div className="flex gap-2">
+      <footer className="flex-none sticky bg-(--paper-bg) bottom-0 z-10 border-(--paper-border)">
+        {mediaList.length > 0 && (
+          <div className="px-4 py-3 animate-slide-up">
+            <div className="flex gap-2 pb-2">
+              {mediaList.map((m, i) => (
+                <div key={i} className="relative shrink-0 w-20 h-20 group">
+                  {m.type === 'image' ? (
+                    <img
+                      src={m.preview}
+                      className="w-full h-full object-cover rounded-lg shadow-md "
+                    />
+                  ) : (
+                    <video
+                      src={m.preview}
+                      controls
+                      className="w-full h-full object-cover rounded-lg shadow-md "
+                    />
+                  )}
+                  <button
+                    onClick={() => removeMedia(i)}
+                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-sm font-bold shadow-lg hover:bg-red-700 transition-colors flex items-center justify-center opacity-90 group-hover:opacity-100"
+                  >
+                    ×
+                  </button>
+                  {m.type === 'video' && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-8 h-8 bg-black/50 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="flex gap-5">
           <input
             className="flex-1 border border-(--paper-border) rounded px-3 py-2 outline-none focus:border-(--paper-accent) bg-(--paper-bg) text-(--paper-text)"
             placeholder="输入..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && onClick()}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           />
+          <MediaInput onFileSelect={handleFileSelect} />
           <button
             className="bg-(--paper-accent) text-(--paper-card) px-4 py-2 rounded disabled:opacity-50"
-            onClick={onClick}
+            onClick={handleSend}
             disabled={loading}
           >
             {loading ? '...' : '发送'}
           </button>
         </div>
       </footer>
+      {preview && (
+        <div
+          onClick={() => setPreview(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            {preview.type === 'image' ? (
+              <img
+                src={preview.url}
+                className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
+              />
+            ) : (
+              <video
+                src={preview.url}
+                controls
+                className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
+              />
+            )}
+            <button
+              className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl font-bold hover:bg-gray-200 transition-colors shadow-lg"
+              onClick={() => setPreview(null)}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Avatar } from "./Avatar";
-import { FollowButton } from "./FollowButton";
-import { VoteButton } from "./VoteButton";
-import { useUserSidebar } from "../hooks/useUserSidebar";
-import { useAuth } from "../hooks/useAuth";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Avatar } from './Avatar';
+import { FollowButton } from './FollowButton';
+import { VoteButton } from './VoteButton';
+import { useUserSidebar } from '../hooks/useUserSidebar';
+import { useAuth } from '../hooks/useAuth';
 
 export const PostItem = ({ post, clickable = true }) => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export const PostItem = ({ post, clickable = true }) => {
               className="cursor-pointer text-base text-(--paper-text-secondary) hover:underline"
               onClick={goProfile}
             >
-              {post.author?.name ?? "不愿意透露姓名的用户"}
+              {post.author?.name ?? '不愿意透露姓名的用户'}
             </div>
 
             {!me && (
@@ -74,18 +74,18 @@ export const PostItem = ({ post, clickable = true }) => {
                     }}
                     className="overflow-hidden rounded-xl border border-(--paper-border) bg-(--paper-bg)"
                   >
-                    {m.type === "image" ? (
+                    {m.type === 'image' ? (
                       <img
                         src={url}
                         alt=""
                         loading="lazy"
-                        className="max-h-[280px] w-full object-cover"
+                        className="max-h-70 w-full object-cover"
                       />
                     ) : (
                       <video
                         src={url}
                         preload="metadata"
-                        className="max-h-[280px] w-full object-cover"
+                        className="max-h-70 w-full object-cover"
                       />
                     )}
                   </div>
@@ -116,7 +116,7 @@ export const PostItem = ({ post, clickable = true }) => {
             className="relative max-h-[90vh] max-w-[90vw]"
             onClick={(e) => e.stopPropagation()}
           >
-            {preview.type === "image" ? (
+            {preview.type === 'image' ? (
               <img
                 src={preview.url}
                 alt=""

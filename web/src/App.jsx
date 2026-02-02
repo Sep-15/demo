@@ -29,11 +29,11 @@ const App = () => {
   }, [location.pathname, user?.id, showUser]);
 
   return (
-    <div className="h-screen flex flex-col  bg-(--paper-bg)">
+    <div className="min-h-screen flex flex-col  bg-(--paper-bg)">
       <Header />
 
-      <div className="lg:max-w-7xl mx-auto w-full flex lg:gap-6 px-6 py-2 lg:pr-88 overflow-hidden ">
-        <main className="flex-1 min-w-0 overflow-y-auto">
+      <div className="lg:max-w-7xl mx-auto w-full flex lg:gap-6 px-6 py-2 lg:pr-88  ">
+        <main className="flex-1 min-w-0 ">
           <Suspense fallback={<div className="p-4 text-lg">Loading...</div>}>
             <Outlet />
           </Suspense>
