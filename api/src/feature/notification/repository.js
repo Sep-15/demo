@@ -1,5 +1,5 @@
 // File: src/feature/notification/repository.js
-import { prisma } from "../../db.js";
+import { prisma } from '../../db.js';
 
 export const createNotification = (data) =>
   prisma.notification.create({ data });
@@ -7,7 +7,7 @@ export const createNotification = (data) =>
 export const findMyNotifications = (userId) =>
   prisma.notification.findMany({
     where: { recipientId: userId },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
     include: {
       actor: { select: { id: true, name: true } },
       post: { select: { id: true, content: true } },
@@ -26,6 +26,18 @@ export const countUnread = (userId) =>
 export const markRead = (id, userId) =>
   prisma.notification.updateMany({
     where: { id, recipientId: userId },
+    data: { isRead: true },
+  });
+
+export const markGroupRead = ({ userId, groupId }) =>
+  prisma.notification.updateMany({
+    where: { groupId, recipientId: userId },
+    data: { isRead: true },
+  });
+
+export const markPostRead = ({ userId, postId }) =>
+  prisma.notification.updateMany({
+    where: { recipientId: userId, postId },
     data: { isRead: true },
   });
 

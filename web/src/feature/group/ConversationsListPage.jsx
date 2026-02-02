@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useConversation } from '../../hooks/useConversation';
+import { readGroupApi } from '../../api';
 
 const ConversationsListPage = () => {
   const { conversations, loading } = useConversation();
   const navigate = useNavigate();
+
+  const markRead = async (data) => await readGroupApi(data);
 
   if (loading)
     return (
@@ -22,7 +25,10 @@ const ConversationsListPage = () => {
           {conversations.map((c) => (
             <div
               key={c.id}
-              onClick={() => navigate(`/conversations/${c.id}`)}
+              onClick={() => {
+                navigate(`/conversations/${c.id}`);
+                markRead({ groupId: c.id });
+              }}
               className=" relative flex flex-col p-4 gap-1 rounded-xl bg-(--paper-card) cursor-pointer transition-colors hover:bg-(--paper-bg)"
             >
               {c.hasUnread && (

@@ -8,6 +8,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Avatar } from '../../components/Avatar';
 import { MediaInput } from './MediaInput';
 import { uploadToCloudinary } from '../../utils/uploadCloudinary';
+import { useNotification } from '../../hooks/useNotification';
 
 const ConversationPage = () => {
   const { user } = useAuth();
@@ -25,6 +26,12 @@ const ConversationPage = () => {
     () => groupMessagesByDate(data?.messages ?? []),
     [data?.messages]
   );
+  const { refreshUnread } = useNotification();
+
+  useEffect(() => {
+    if (!id) return;
+    refreshUnread();
+  }, [refreshUnread, id]);
 
   useEffect(() => {
     if (id) setActiveGroup(id);
@@ -131,8 +138,8 @@ const ConversationPage = () => {
   if (!data) return <div className="p-4 text-center">Loading...</div>;
 
   return (
-    <div className="flex flex-col bg-(--paper-bg)">
-      <header className=" text-center flex-none sticky z-10 top-16 block lg:hidden font-bold">
+    <div className="min-h-screen flex flex-col bg-(--paper-bg)">
+      <header className=" text-center flex-none sticky z-10 top-16 block lg:hidden font-bold  bg-(--paper-bg)">
         {data.title}
       </header>
       <main className="flex-1 p-4 space-y-4">

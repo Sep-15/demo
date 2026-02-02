@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { PostItem } from '../components/PostItem';
 import { CommentList } from '../components/CommentList';
 import { useUserSidebar } from '../hooks/useUserSidebar';
+import { useNotification } from '../hooks/useNotification';
 
 // File: src/pages/PostDetailPage.jsx
 const PostDetailPage = () => {
@@ -11,6 +12,13 @@ const PostDetailPage = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const { showUser } = useUserSidebar();
+  const { refreshUnread } = useNotification();
+
+  useEffect(() => {
+    if (!id) return;
+    refreshUnread();
+  }, [refreshUnread, id]);
+
   useEffect(() => {
     if (post?.author?.id) {
       showUser(post.author.id);
@@ -38,7 +46,11 @@ const PostDetailPage = () => {
   return (
     <div>
       <PostItem post={post} clickable={false} />
-      <CommentList postId={post.id} comments={post.comments} onRefresh={fetchPost} />
+      <CommentList
+        postId={post.id}
+        comments={post.comments}
+        onRefresh={fetchPost}
+      />
     </div>
   );
 };

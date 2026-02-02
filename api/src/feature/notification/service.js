@@ -54,6 +54,16 @@ export const readOne = async (userId, id) => {
   await repo.markRead(id, userId);
 };
 
+export const readGroup = async ({ userId, data }) => {
+  const { groupId } = data;
+  await repo.markGroupRead({ userId, groupId: Number(groupId) });
+};
+
+export const readPost = async ({ userId, data }) => {
+  const { postId } = data;
+  await repo.markPostRead({ userId, postId: Number(postId) });
+};
+
 /* 全部已读 */
 export const readAll = async (userId) => {
   await repo.markAllRead(userId);

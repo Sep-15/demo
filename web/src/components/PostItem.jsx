@@ -5,6 +5,7 @@ import { FollowButton } from './FollowButton';
 import { VoteButton } from './VoteButton';
 import { useUserSidebar } from '../hooks/useUserSidebar';
 import { useAuth } from '../hooks/useAuth';
+import { readPostApi } from '../api';
 
 export const PostItem = ({ post, clickable = true }) => {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ export const PostItem = ({ post, clickable = true }) => {
   const { user } = useAuth();
   const me = user?.id && post?.author?.id && user.id === post.author.id;
 
-  const onClickPost = () => {
+  const onClickPost = async () => {
+    await readPostApi({ postId: post.id });
     showUser(post.author.id);
     navigate(`/posts/${post.id}`);
   };

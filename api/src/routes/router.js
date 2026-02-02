@@ -58,6 +58,8 @@ router.patch(
   requireAuth,
   notification.readNotification
 );
+router.patch('/notifications/read-group', requireAuth, notification.readGroup);
+router.patch('/notifications/read-post', requireAuth, notification.readPost);
 router.patch(
   '/notifications/read-all',
   requireAuth,

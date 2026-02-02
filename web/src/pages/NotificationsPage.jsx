@@ -5,6 +5,7 @@ import {
   readNotificationApi,
   readAllNotificationsApi,
   deleteNotificationApi,
+  readGroupApi,
 } from '../api';
 import { useNotification } from '../hooks/useNotification';
 import { useAuth } from '../hooks/useAuth';
@@ -38,6 +39,16 @@ const NotificationsPage = () => {
     load();
   };
 
+  const markGroupRead = async (data) => {
+    await readGroupApi(data);
+    load();
+  };
+
+  const markPostRead = async (data) => {
+    await readPostApi(data);
+    load();
+  };
+
   const markAllRead = async () => {
     await readAllNotificationsApi();
     load();
@@ -64,6 +75,8 @@ const NotificationsPage = () => {
       REPLY: `/posts/${n.postId}`,
     };
     const path = routes[n.type] || '/notifications';
+    if (n.groupId) markGroupRead({ groupId: n.groupId });
+    if (n.postId) markPostRead({ postId: n.postId });
     if (!n.isRead) markRead(n.id);
     navigate(path);
   };

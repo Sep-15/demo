@@ -93,6 +93,12 @@ export const unreadNotificationCountApi = () =>
 export const readNotificationApi = (id) =>
   apiClient.patch(`/notifications/${id}/read`);
 
+export const readGroupApi = (data) =>
+  apiClient.patch('/notifications/read-group', data);
+
+export const readPostApi = (data) =>
+  apiClient.patch('/notifications/read-post', data);
+
 export const readAllNotificationsApi = () =>
   apiClient.patch('/notifications/read-all');
 

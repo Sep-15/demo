@@ -12,18 +12,14 @@ export const NotificationProvider = ({ children }) => {
   const { user } = useAuth();
   const initializedRef = useRef(false);
   const toastRef = useRef(0);
-  useEffect(() => {
+  const refreshUnread = useCallback(async () => {
     if (!user?.id) return;
-    unreadNotificationCountApi()
-      .then(({ data }) => {
-        setUnread(data.count);
-        initializedRef.current = true;
-      })
-      .catch(() => {
-        setUnread(0);
-        initializedRef.current = true;
-      });
+    const { data } = await unreadNotificationCountApi();
+    setUnread(data.count);
   }, [user?.id]);
+  useEffect(() => {
+    refreshUnread().finally(() => (initializedRef.current = true));
+  }, [refreshUnread]);
   const onNewNotification = useCallback(() => {
     setUnread((u) => {
       if (initializedRef.current && Date.now() - toastRef.current > 800) {
@@ -34,10 +30,12 @@ export const NotificationProvider = ({ children }) => {
     });
   }, []);
   const clearNotifications = useCallback(() => {
-    setUnread(0);
-  }, []);
+    refreshUnread();
+  }, [refreshUnread]);
   return (
-    <NotificationContext.Provider value={{ unread, onNewNotification, clearNotifications }}>
+    <NotificationContext.Provider
+      value={{ unread, refreshUnread, onNewNotification, clearNotifications }}
+    >
       {children}
     </NotificationContext.Provider>
   );
