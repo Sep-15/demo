@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { getConversationApi, sendMessageApi } from '../../api';
+import { getConversationApi, sendMessageApi, readGroupApi } from '../../api';
 import { useConversation } from '../../hooks/useConversation';
 import socket from '../../socket';
 import { useUserSidebar } from '../../hooks/useUserSidebar';
@@ -30,7 +30,7 @@ const ConversationPage = () => {
 
   useEffect(() => {
     if (!id) return;
-    refreshUnread();
+    readGroupApi({ groupId: id }).then(() => refreshUnread());
   }, [refreshUnread, id]);
 
   useEffect(() => {

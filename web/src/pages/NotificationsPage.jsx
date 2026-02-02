@@ -6,6 +6,7 @@ import {
   readAllNotificationsApi,
   deleteNotificationApi,
   readGroupApi,
+  readPostApi,
 } from '../api';
 import { useNotification } from '../hooks/useNotification';
 import { useAuth } from '../hooks/useAuth';

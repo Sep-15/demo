@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getPostByIdApi } from '../api';
+import { getPostByIdApi, readPostApi } from '../api';
 import { useParams } from 'react-router-dom';
 import { PostItem } from '../components/PostItem';
 import { CommentList } from '../components/CommentList';
@@ -16,7 +16,7 @@ const PostDetailPage = () => {
 
   useEffect(() => {
     if (!id) return;
-    refreshUnread();
+    readPostApi({ postId: id }).then(() => refreshUnread());
   }, [refreshUnread, id]);
 
   useEffect(() => {
