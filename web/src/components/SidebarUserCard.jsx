@@ -1,8 +1,9 @@
 import { Avatar } from './Avatar';
 import { FollowButton } from './FollowButton';
 import { CreateConversationButton } from '../feature/group/CreateConversationButton';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 export const SidebarUserCard = ({ data, me }) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const isConversationPage = location.pathname.startsWith('/conversations/');
   if (!data) {
@@ -16,8 +17,10 @@ export const SidebarUserCard = ({ data, me }) => {
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <Avatar name={data.user.name} />
-
-        <div className="flex-1 min-w-0">
+        <div
+          className="flex-1 min-w-0 hover:underline cursor-pointer"
+          onClick={() => navigate(`/profile/${data.user.id}`)}
+        >
           <div className="font-semibold text-gray-900 truncate">
             {data.user.name}
           </div>

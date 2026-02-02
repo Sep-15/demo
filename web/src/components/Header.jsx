@@ -2,25 +2,12 @@ import { useAuth } from '../hooks/useAuth';
 import { Avatar } from './Avatar';
 import { Nav } from './Nav';
 import { useNotification } from '../hooks/useNotification';
-import { useEffect, useRef, useState } from 'react';
-import { NotificationPreview } from './NotificationPreview';
+import { useNavigate } from 'react-router-dom';
 
 export const Header = () => {
   const { logout, user } = useAuth();
   const { unread } = useNotification();
-  const [open, setOpen] = useState(false);
-  const wrapperRef = useRef(null);
-
-  // 点击外部关闭
-  useEffect(() => {
-    const onClick = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
-  }, []);
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-(--paper-card) border-b border-(--paper-border) backdrop-blur">
@@ -31,15 +18,19 @@ export const Header = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Avatar name={user.name} size="sm" />
-            <span className="text-sm font-medium text-gray-800 max-w-30 truncate">
-              {user.name}
-            </span>
+            <div
+              onClick={() => navigate(`/profile/${user.id}`)}
+              className="flex items-center gap-1 cursor-pointer hover:bg-(--paper-bg)"
+            >
+              <Avatar name={user.name} size="sm" />
+              <span className="text-sm font-medium text-gray-800 max-w-30 truncate">
+                {user.name}
+              </span>
+            </div>
 
-            {/* 🔔 + 弹层必须在同一个 relative 容器 */}
-            <div ref={wrapperRef} className="relative">
+            <div className="relative">
               <button
-                onClick={() => setOpen((v) => !v)}
+                onClick={() => navigate('/notifications')}
                 className="relative text-lg cursor-pointer select-none"
               >
                 🔔
@@ -49,18 +40,12 @@ export const Header = () => {
                   </span>
                 )}
               </button>
-
-              {open && (
-                <div className="absolute right-0 mt-2 w-80 z-50">
-                  <NotificationPreview />
-                </div>
-              )}
             </div>
 
             <div className="h-4 w-px bg-gray-200" />
             <button
               onClick={logout}
-              className="text-sm font-medium text-gray-800 max-w-30 truncate"
+              className="text-sm font-medium text-gray-800 max-w-30 truncate cursor-pointer"
             >
               Logout
             </button>

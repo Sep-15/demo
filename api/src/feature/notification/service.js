@@ -1,6 +1,6 @@
 // File: src/feature/notification/service.js
-import * as repo from "./repository.js";
-import { emitToUser } from "../../socket/emitter.js";
+import * as repo from './repository.js';
+import { emitToUser } from '../../socket/emitter.js';
 
 /**
  * 统一通知入口
@@ -11,6 +11,7 @@ export const notify = async ({
   type,
   recipientId,
   actorId,
+  groupId = null,
   postId = null,
   commentId = null,
   content = null,
@@ -22,12 +23,13 @@ export const notify = async ({
       type,
       recipientId,
       actorId,
+      groupId,
       postId,
       commentId,
       content,
     });
 
-    emitToUser(recipientId, "notification:new", {
+    emitToUser(recipientId, 'notification:new', {
       id: notification.id,
       type,
       content,
@@ -37,7 +39,7 @@ export const notify = async ({
       createdAt: notification.createdAt,
     });
   } catch (e) {
-    console.error("notify error:", e);
+    console.error('notify error:', e);
   }
 };
 

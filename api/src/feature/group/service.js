@@ -2,6 +2,7 @@ import { AppError } from '../../errors/AppError.js';
 import { notify } from '../notification/service.js';
 import { emitToGroup } from '../../socket/emitter.js';
 import * as repo from './repository.js';
+import { userActiveGroups } from '../../socket/index.js';
 
 const mapGroupToConversation = (group, userId) => {
   const isPrivate = !group.isGroup;
@@ -55,6 +56,8 @@ export const createConversation = async ({ userId, payload }) => {
       type: 'CONVERSATION',
       recipientId: targetId,
       actorId: userId,
+      groupId: group.id,
+      content: content,
     });
   } else {
     const members = [
@@ -68,6 +71,8 @@ export const createConversation = async ({ userId, payload }) => {
           type: 'CONVERSATION',
           recipientId: id,
           actorId: userId,
+          groupId: group.id,
+          content: content,
         })
       )
     );
@@ -84,6 +89,7 @@ export const getConversations = async ({ userId }) => {
 export const sendMessage = async ({ userId, groupId, payload }) => {
   const { content = null, url = null } = payload;
   if (!content && !url) throw new AppError('url和content不能同时为空', 400);
+
   const message = await repo.createMessage({
     content,
     url,
@@ -103,6 +109,25 @@ export const sendMessage = async ({ userId, groupId, payload }) => {
 
   emitToGroup(groupId, 'message:new', broadcastData);
 
+  const group = await repo.findGroupById({ groupId: Number(groupId) });
+  const memberIds = group.members
+    .map((m) => m.userId)
+    .filter((id) => id != userId);
+  await Promise.all(
+    memberIds.map(async (memberId) => {
+      const activeGroupId = userActiveGroups.get(memberId);
+      const isWatchingThisGroup = activeGroupId === Number(groupId);
+      if (!isWatchingThisGroup) {
+        await notify({
+          type: 'CONVERSATION',
+          recipientId: memberId,
+          actorId: userId,
+          groupId: Number(groupId),
+          content: content,
+        });
+      }
+    })
+  );
   return message;
 };
 

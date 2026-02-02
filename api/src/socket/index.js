@@ -4,10 +4,8 @@ import jwt from 'jsonwebtoken';
 import { initEmitter } from './emitter.js';
 import { findGroups } from '../feature/group/repository.js';
 
-/**
- * Socket.IO 初始化
- * @param {import("http").Server} httpServer
- */
+const userActiveGroups = new Map();
+
 export const initSocket = (httpServer) => {
   const allowedOrigins = (process.env.CORS_ORIGINS || '')
     .split(',') // 分割字符串
@@ -42,7 +40,6 @@ export const initSocket = (httpServer) => {
     }
   });
 
-  /* ---------- 连接 ---------- */
   io.on('connection', async (socket) => {
     const userId = socket.user.sub;
     console.log('[socket] connected userId =', userId);
@@ -63,22 +60,25 @@ export const initSocket = (httpServer) => {
       console.error('[socket] auto-join groups failed:', error);
     }
 
-    /**
-     * 群消息已读同步
-     * 只通知其他人
-     */
-    socket.on('group:read', ({ groupId }) => {
-      if (!groupId) return;
-
-      socket.to(`group:${groupId}`).emit('group:read', {
-        groupId,
-        userId,
-      });
+    socket.on('group:focus', ({ groupId }) => {
+      userActiveGroups.set(userId, Number(groupId));
+      console.log(`[socket] user ${userId} focusing group:${groupId}`);
     });
 
-    /* ---------- 断开 ---------- */
+    socket.on('group:blur', ({ groupId }) => {
+      if (userActiveGroups.get(userId) === Number(groupId)) {
+        userActiveGroups.delete(userId);
+        console.log(`[socket] user ${userId} blurred group:${groupId}`);
+      }
+    });
+
     socket.on('disconnect', () => {});
   });
 
   return io;
 };
+
+export const getUserActiveGroup = (userId) =>
+  userActiveGroups.get(userId) || null;
+
+export { userActiveGroups };

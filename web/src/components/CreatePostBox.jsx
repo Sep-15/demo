@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { createPostApi } from "../api";
+import { useState } from 'react';
+import { createPostApi } from '../api';
 
 /* Cloudinary config */
-const CLOUDINARY_CLOUD_NAME = "dhtthg8sf";
-const CLOUDINARY_UPLOAD_PRESET = "simple_unsigned";
+const CLOUDINARY_CLOUD_NAME = 'dhtthg8sf';
+const CLOUDINARY_UPLOAD_PRESET = 'simple_unsigned';
 
 export const CreatePostBox = ({ onCreated }) => {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const [mediaList, setMediaList] = useState([]);
   // [{ file, type: "image" | "video", preview }]
   const [loading, setLoading] = useState(false);
@@ -17,17 +17,17 @@ export const CreatePostBox = ({ onCreated }) => {
   /* 上传单个文件到 Cloudinary */
   const uploadToCloudinary = async (file, type) => {
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
-    const endpoint = type === "video" ? "video/upload" : "image/upload";
+    const endpoint = type === 'video' ? 'video/upload' : 'image/upload';
 
     const res = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${endpoint}`,
       {
-        method: "POST",
+        method: 'POST',
         body: formData,
-      },
+      }
     );
 
     const text = await res.text(); // 不要直接 res.json
@@ -36,13 +36,13 @@ export const CreatePostBox = ({ onCreated }) => {
     try {
       data = JSON.parse(text);
     } catch {
-      console.error("Cloudinary raw response:", text);
-      throw new Error("Cloudinary returned non-JSON response");
+      console.error('Cloudinary raw response:', text);
+      throw new Error('Cloudinary returned non-JSON response');
     }
 
     if (!res.ok) {
-      console.error("Cloudinary error payload:", data);
-      throw new Error(data?.error?.message || "Cloudinary upload failed");
+      console.error('Cloudinary error payload:', data);
+      throw new Error(data?.error?.message || 'Cloudinary upload failed');
     }
 
     return data;
@@ -71,7 +71,7 @@ export const CreatePostBox = ({ onCreated }) => {
               duration: uploaded.duration, // video 才有
             },
           };
-        }),
+        })
       );
 
       const payload = {
@@ -81,7 +81,7 @@ export const CreatePostBox = ({ onCreated }) => {
 
       const { data } = await createPostApi(payload);
 
-      setContent("");
+      setContent('');
       setMediaList([]);
       setExpanded(false); // 提交后收起表单
       onCreated?.(data);
@@ -101,7 +101,7 @@ export const CreatePostBox = ({ onCreated }) => {
       {!expanded ? (
         <div
           onClick={() => setExpanded(true)}
-          className="w-full cursor-text rounded-lg border border-(--paper-border) p-3 text-base focus-within:ring-1 focus-within:ring-(--paper-accent) bg-(--paper-bg) text-(--paper-text) min-h-[44px] flex items-center"
+          className="w-full cursor-text rounded-lg border border-(--paper-border) p-3 text-base focus-within:ring-1 focus-within:ring-(--paper-accent) bg-(--paper-bg) text-(--paper-text) min-h-11 flex items-center"
         >
           <span className="text-(--paper-text-secondary)">写点什么…</span>
         </div>
@@ -128,7 +128,7 @@ export const CreatePostBox = ({ onCreated }) => {
 
               const next = files.map((file) => ({
                 file,
-                type: file.type.startsWith("video") ? "video" : "image",
+                type: file.type.startsWith('video') ? 'video' : 'image',
                 preview: URL.createObjectURL(file),
               }));
 
@@ -141,8 +141,11 @@ export const CreatePostBox = ({ onCreated }) => {
           {mediaList.length > 0 && (
             <div className="grid grid-cols-2 gap-3">
               {mediaList.map((m, i) => (
-                <div key={i} className="relative rounded-lg border border-(--paper-border) bg-(--paper-bg) p-2">
-                  {m.type === "image" ? (
+                <div
+                  key={i}
+                  className="relative rounded-lg border border-(--paper-border) bg-(--paper-bg) p-2"
+                >
+                  {m.type === 'image' ? (
                     <img
                       src={m.preview}
                       alt="preview"
@@ -175,7 +178,7 @@ export const CreatePostBox = ({ onCreated }) => {
             <button
               type="button"
               onClick={() => {
-                setContent("");
+                setContent('');
                 setMediaList([]);
                 if (!content.trim() && mediaList.length === 0) {
                   setExpanded(false); // 如果清空后没有内容，则收起表单
@@ -190,13 +193,13 @@ export const CreatePostBox = ({ onCreated }) => {
               type="submit"
               disabled={loading || isEmpty}
               className={[
-                "rounded-lg px-5 py-2 text-base font-medium",
+                'rounded-lg px-5 py-2 text-base font-medium',
                 loading || isEmpty
-                  ? "cursor-not-allowed bg-gray-200 text-gray-400"
-                  : "bg-(--paper-accent) text-white hover:bg-(--paper-accent)/90",
-              ].join(" ")}
+                  ? 'cursor-not-allowed bg-gray-200 text-gray-400'
+                  : 'bg-(--paper-accent) text-white hover:bg-(--paper-accent)/90',
+              ].join(' ')}
             >
-              {loading ? "发布中…" : "发布"}
+              {loading ? '发布中…' : '发布'}
             </button>
           </div>
         </>
