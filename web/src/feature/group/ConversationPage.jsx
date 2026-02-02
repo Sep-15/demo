@@ -6,6 +6,7 @@ import socket from '../../socket';
 import { useUserSidebar } from '../../hooks/useUserSidebar';
 import { useAuth } from '../../hooks/useAuth';
 import { Avatar } from '../../components/Avatar';
+import { MediaInput } from './MediaInput';
 
 const ConversationPage = () => {
   const { user } = useAuth();
@@ -78,6 +79,17 @@ const ConversationPage = () => {
       setLoading(false);
     }
   };
+
+  const handleMediaUpload = async (results) => {
+    for (const item of results) {
+      try {
+        await sendMessageApi(id, { url: item });
+      } catch (error) {
+        console.error('发送媒体消息失败:', error);
+      }
+    }
+  };
+
   if (!data) return <div className="p-4 text-center">Loading...</div>;
 
   return (
@@ -110,6 +122,23 @@ const ConversationPage = () => {
                       {m.senderName}
                     </div>
                   )}
+                  {m.url && (
+                    <div className="mb-2 overflow-hidden rounded-md">
+                      {m.url.type === 'image' ? (
+                        <img
+                          src={m.url.cloudinary.secure_url}
+                          alt="image"
+                          className="max-w-full h-auto max-h-60 object-cover"
+                        />
+                      ) : (
+                        <video
+                          src={m.url.cloudinary.secure_url}
+                          controls
+                          className="max-w-full max-h-60"
+                        />
+                      )}
+                    </div>
+                  )}
                   <div>{m.content}</div>
                   <div className="text-xs mt-1 text-right opacity-70">
                     {new Date(m.createdAt).toLocaleTimeString([], {
@@ -126,6 +155,7 @@ const ConversationPage = () => {
         <div ref={bottomRef} />
       </main>
       <footer className="flex-none sticky bg-(--paper-bg) bottom-0 z-10 border-t border-(--paper-border)">
+        <MediaInput onUploadSuccess={handleMediaUpload} />
         <div className="flex gap-2">
           <input
             className="flex-1 border border-(--paper-border) rounded px-3 py-2 outline-none focus:border-(--paper-accent) bg-(--paper-bg) text-(--paper-text)"
